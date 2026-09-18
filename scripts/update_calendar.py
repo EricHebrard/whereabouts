@@ -90,6 +90,8 @@ def main():
 
             start = convert_datetime(dtstart)
 
+            location = str(component.get("LOCATION", ""))
+
             event = {
                 "id": f"{calendar_info['name']}-{uid}",
                 "title": summary,
