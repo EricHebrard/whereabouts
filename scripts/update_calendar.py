@@ -8,22 +8,22 @@ from icalendar import Calendar
 CALENDARS = [
     {
         "name": "Academics",
-        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/d7010a2bb4f245e4bc436a82091e5b6016012157490710576232/calendar.ics",
+        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/153c302eae1241669e5ac7cd0678fe7c5193535583262517238/calendar.ics",
         "color": "#4285F4",
     },
     {
         "name": "Research",
-        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/04bc370fcec948b981d8980753dd2f1313185571384744592492/calendar.ics",
+        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/ae60a8e9f5e947eeafc1d5afed2647ab4825117944977208683/calendar.ics",
         "color": "#34A853",
     },
     {
         "name": "Teaching",
-        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/6d5bf133fa0d498196ac619ec2cc242e15629469048917954620/calendar.ics",
+        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/9e1e7ceacdeb40a091a09257c68584ef9816993180113323493/calendar.ics",
         "color": "#F29900",
     },
     {
         "name": "Travel",
-        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/176d8634938d473b9a57fefd8f15ad7e15652466246061674388/calendar.ics",
+        "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/b2800759e43c4aae84d6f3c4cc34982d12859872542290148978/calendar.ics",
         "color": "#8E44AD",
     },
 ]
