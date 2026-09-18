@@ -99,7 +99,8 @@ def main():
                 "backgroundColor": calendar_info["color"],
                 "borderColor": calendar_info["color"],
                 "extendedProps": {
-                    "calendar": calendar_info["name"]
+                    "calendar": calendar_info["name"],
+                    "location": location
                 }
             }
 
