@@ -183,6 +183,30 @@
             hour12: false
           },
 
+          eventContent: function(arg) {
+            const location = arg.event.extendedProps.location;
+
+            const container = document.createElement('div');
+
+            const title = document.createElement('div');
+            title.textContent = arg.event.title;
+            title.style.fontWeight = '500';
+
+            container.appendChild(title);
+
+            if (location) {
+              const loc = document.createElement('div');
+              loc.textContent = location;
+              loc.style.fontSize = '0.85em';
+              loc.style.opacity = '0.9';
+              loc.style.marginTop = '2px';
+
+              container.appendChild(loc);
+            }
+
+            return { domNodes: [container] };
+          },
+
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
