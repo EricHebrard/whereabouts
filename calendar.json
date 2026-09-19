@@ -1764,6 +1764,18 @@
     "end": "2026-09-15T14:30:00+01:00"
   },
   {
+    "id": "Academics-040000008200E00074C5B7101A82E008000000006B6769C07448DD01000000000000000010000000061D0F27B63047469A2146090F43ABE9",
+    "title": "Meeting with Geoff Nash",
+    "start": "2026-09-18T12:00:00+01:00",
+    "backgroundColor": "#4285F4",
+    "borderColor": "#4285F4",
+    "extendedProps": {
+      "calendar": "Academics",
+      "location": "Innovation Centre Cafe\nThe Innovation Centre, Rennes Dr, Exeter, EX4 4RN, England"
+    },
+    "end": "2026-09-18T13:00:00+01:00"
+  },
+  {
     "id": "Academics-040000008200E00074C5B7101A82E00800000000106F12E06C40DD0100000000000000001000000041C4111FECC23F47AECA5D51517B8072",
     "title": "Coaching with Vic Jenkins",
     "start": "2026-09-23T09:00:00+01:00",
