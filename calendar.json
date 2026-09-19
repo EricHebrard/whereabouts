@@ -3305,42 +3305,6 @@
     "end": "2026-12-17T14:00:00+00:00"
   },
   {
-    "id": "Teaching-040000008200E00074C5B7101A82E00800000000F8AB455AF226DC01000000000000000010000000E79C17CA408C1B48B3479E1935D2E643",
-    "title": "PHYM503 vivas",
-    "start": "2025-09-19T10:30:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "PHY/124"
-    },
-    "end": "2025-09-19T13:00:00+01:00"
-  },
-  {
-    "id": "Teaching-040000008200E00074C5B7101A82E00800000000E494E5666F29DC01000000000000000010000000657CE9D864DF0846A2E91BDAFA957561",
-    "title": "Meeting with Ben Gardner",
-    "start": "2025-09-19T13:45:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "PHY/514"
-    },
-    "end": "2025-09-19T14:30:00+01:00"
-  },
-  {
-    "id": "Teaching-040000008200E00074C5B7101A82E0080000000015E82507F226DC01000000000000000010000000ABF0C17E22952A448D17B1F11608A924",
-    "title": "NSCTut2",
-    "start": "2025-09-19T14:30:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "PCC"
-    },
-    "end": "2025-09-19T15:00:00+01:00"
-  },
-  {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000094E2DC99D320DC0100000000000000001000000028D177B53C24604A80537FAEFF73ECD6",
     "title": "NSC1003_L08/01 - Introduction to NSC1003",
     "start": "2025-09-22T11:05:00+01:00",
@@ -3642,7 +3606,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000006490DBA8E8F7DB01000000000000000010000000AF3ABA1B0D0BCA47AFF088F7E5131ADF",
-    "title": "NSC2001_P01/01 - Frontiers in Science 2",
+    "title": "NSC2001_P08/01 - Frontiers in Science 2",
     "start": "2025-11-27T09:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3654,7 +3618,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000006490DBA8E8F7DB01000000000000000010000000AF3ABA1B0D0BCA47AFF088F7E5131ADF",
-    "title": "NSC2001_P08/01 - Frontiers in Science 2",
+    "title": "NSC2001_P01/01 - Frontiers in Science 2",
     "start": "2025-11-27T09:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
