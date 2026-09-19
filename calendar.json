@@ -3293,30 +3293,6 @@
     "end": "2026-12-17T14:00:00+00:00"
   },
   {
-    "id": "Teaching-040000008200E00074C5B7101A82E008000000005DB7C0869C20DC010000000000000000100000003AF2A3A8D278804CABB366405A14B5B2",
-    "title": "NSCTut1",
-    "start": "2025-09-18T11:00:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "UoE"
-    },
-    "end": "2025-09-18T12:30:00+01:00"
-  },
-  {
-    "id": "Teaching-040000008200E00074C5B7101A82E00800000000EF90FE369D20DC0100000000000000001000000012535BB460C0BA4AA4F31E22F172B5AD",
-    "title": "Natural Sciences Welcome",
-    "start": "2025-09-18T12:30:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "PCC"
-    },
-    "end": "2025-09-18T13:00:00+01:00"
-  },
-  {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000F8AB455AF226DC01000000000000000010000000E79C17CA408C1B48B3479E1935D2E643",
     "title": "PHYM503 vivas",
     "start": "2025-09-19T10:30:00+01:00",
@@ -3678,7 +3654,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P12/01 - Frontiers in Science 2",
+    "title": "NSC2001_P02/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3690,7 +3666,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P02/01 - Frontiers in Science 2",
+    "title": "NSC2001_P12/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3950,7 +3926,7 @@
       "calendar": "Teaching",
       "location": "PHY/514"
     },
-    "end": "2026-01-23T15:45:00+00:00"
+    "end": "2026-01-23T15:30:00+00:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000DB19EFAC1F8BDC01000000000000000010000000E6C3B1AD254DFC489A75A87B8D62653A",
@@ -3962,7 +3938,7 @@
       "calendar": "Teaching",
       "location": "PHY/514"
     },
-    "end": "2026-01-23T15:30:00+00:00"
+    "end": "2026-01-23T15:45:00+00:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000ED129B531F8ADC0100000000000000001000000040E8DAA541E5CF4580FF25DB01215248",
