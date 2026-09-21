@@ -3259,7 +3259,7 @@
   {
     "id": "Research-040000008200E00074C5B7101A82E008000000000C2077C7BE49DD01000000000000000010000000247FE79456F5124CBDCCABA968AB06A0",
     "title": "Meeting with Harry Baskett",
-    "start": "2026-09-21T14:00:00+01:00",
+    "start": "2026-09-21T14:15:00+01:00",
     "backgroundColor": "#34A853",
     "borderColor": "#34A853",
     "extendedProps": {
@@ -3267,6 +3267,18 @@
       "location": "PHY/514"
     },
     "end": "2026-09-21T15:00:00+01:00"
+  },
+  {
+    "id": "Research-040000008200E00074C5B7101A82E0080000000008D4FE9ED749DD010000000000000000100000001F8FD166AB7C9146A12AB4AE8A5A343C",
+    "title": "Meeting with Sophia Adams",
+    "start": "2026-09-23T10:00:00+01:00",
+    "backgroundColor": "#34A853",
+    "borderColor": "#34A853",
+    "extendedProps": {
+      "calendar": "Research",
+      "location": "Microsoft Teams"
+    },
+    "end": "2026-09-23T11:00:00+01:00"
   },
   {
     "id": "Research-040000008200E00074C5B7101A82E00800000000E6E915B44286DC0100000000000000001000000005FFF08CF9BD974F8F9E0516264F346E",
@@ -4839,7 +4851,7 @@
       "calendar": "Teaching",
       "location": "Exeter Northcott Theatre\nStocker Road, Exeter, EX4 4QB, England"
     },
-    "end": "2026-09-21T14:00:00+01:00"
+    "end": "2026-09-21T14:15:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000BCFDD9587647DD01000000000000000010000000002FA241882E914DB3503EF2434C51DC",
@@ -4851,7 +4863,7 @@
       "calendar": "Teaching",
       "location": "Roundhouse Café"
     },
-    "end": "2026-09-21T15:30:00+01:00"
+    "end": "2026-09-21T15:15:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000007D615E188710DD01000000000000000010000000246618F6C094684699762C42C9B8A918",
