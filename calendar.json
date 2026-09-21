@@ -1783,7 +1783,7 @@
     "borderColor": "#4285F4",
     "extendedProps": {
       "calendar": "Academics",
-      "location": "FOR"
+      "location": "QUB"
     },
     "end": "2026-09-23T10:00:00+01:00"
   },
@@ -1811,6 +1811,19 @@
       "location": "Great Hall \nUniversity of Exeter, Devonshire House, Stocker Road, Exeter, EX4 4PZ, England"
     },
     "end": "2026-10-25",
+    "allDay": true
+  },
+  {
+    "id": "Academics-040000008200E00074C5B7101A82E0080000000043655C41AF49DD010000000000000000100000002A6AAF7CD95AD5419E0464C2B559A713",
+    "title": "Armando Perri's PhD viva",
+    "start": "2026-11-04",
+    "backgroundColor": "#4285F4",
+    "borderColor": "#4285F4",
+    "extendedProps": {
+      "calendar": "Academics",
+      "location": "UCL"
+    },
+    "end": "2026-11-05",
     "allDay": true
   },
   {
@@ -2217,7 +2230,7 @@
     "borderColor": "#34A853",
     "extendedProps": {
       "calendar": "Research",
-      "location": "Camper Coffee Co.\nQueens Building, The Queen's Dr, Exeter, EX4 4QH, England"
+      "location": "QUB"
     },
     "end": "2025-11-25T15:00:00+00:00"
   },
@@ -3244,6 +3257,18 @@
     "end": "2026-09-17T11:00:00+01:00"
   },
   {
+    "id": "Research-040000008200E00074C5B7101A82E008000000000C2077C7BE49DD01000000000000000010000000247FE79456F5124CBDCCABA968AB06A0",
+    "title": "Meeting with Harry Baskett",
+    "start": "2026-09-21T14:00:00+01:00",
+    "backgroundColor": "#34A853",
+    "borderColor": "#34A853",
+    "extendedProps": {
+      "calendar": "Research",
+      "location": "PHY/514"
+    },
+    "end": "2026-09-21T15:00:00+01:00"
+  },
+  {
     "id": "Research-040000008200E00074C5B7101A82E00800000000E6E915B44286DC0100000000000000001000000005FFF08CF9BD974F8F9E0516264F346E",
     "title": "ARIEL Chemistry WG Meeting",
     "start": "2026-09-24T13:00:00+01:00",
@@ -3606,7 +3631,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000006490DBA8E8F7DB01000000000000000010000000AF3ABA1B0D0BCA47AFF088F7E5131ADF",
-    "title": "NSC2001_P08/01 - Frontiers in Science 2",
+    "title": "NSC2001_P01/01 - Frontiers in Science 2",
     "start": "2025-11-27T09:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3618,7 +3643,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000006490DBA8E8F7DB01000000000000000010000000AF3ABA1B0D0BCA47AFF088F7E5131ADF",
-    "title": "NSC2001_P01/01 - Frontiers in Science 2",
+    "title": "NSC2001_P08/01 - Frontiers in Science 2",
     "start": "2025-11-27T09:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -4805,6 +4830,18 @@
     "end": "2026-09-21T10:25:00+01:00"
   },
   {
+    "id": "Teaching-040000008200E00074C5B7101A82E0080000000011AAD0CEB949DD01000000000000000010000000D4E92C1028D2DF4582C908E032B356D0",
+    "title": "NSC1003 Chemistry Preparation",
+    "start": "2026-09-21T13:30:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "Exeter Northcott Theatre\nStocker Road, Exeter, EX4 4QB, England"
+    },
+    "end": "2026-09-21T14:00:00+01:00"
+  },
+  {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000BCFDD9587647DD01000000000000000010000000002FA241882E914DB3503EF2434C51DC",
     "title": "NSCTut1",
     "start": "2026-09-21T15:00:00+01:00",
@@ -4841,6 +4878,42 @@
     "end": "2026-09-23T14:25:00+01:00"
   },
   {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000DEAFE7ABB749DD0100000000000000001000000098D63DBC0E12A442A69805B0D5FAEFB9",
+    "title": "NSCTut2",
+    "start": "2026-09-23T14:30:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "Roundhouse Café"
+    },
+    "end": "2026-09-23T15:00:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000B18D678DB349DD01000000000000000010000000EE1DFD9F87C15F48B58B1E4202499D9F",
+    "title": "NSCTut3",
+    "start": "2026-09-24T11:30:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "Roundhouse Café"
+    },
+    "end": "2026-09-24T12:00:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000F8386728B249DD01000000000000000010000000412CAC4DEDE2864DB8DE89ADF7F9FD5A",
+    "title": "NSCTut4",
+    "start": "2026-09-25T09:30:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "Roundhouse Café"
+    },
+    "end": "2026-09-25T10:00:00+01:00"
+  },
+  {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000C7B7B92E8710DD0100000000000000001000000051CA1A0DA3C851448D77FF4CDB8A2555",
     "title": "PHYM012_L1/01 - Solar and Extra-Solar Planets and Their Atmospheres",
     "start": "2026-09-25T12:35:00+01:00",
@@ -4851,6 +4924,18 @@
       "location": "QUB/LT4.2"
     },
     "end": "2026-09-25T13:25:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000C2FCFACDBB49DD01000000000000000010000000EB829B7E5605F545952382C2E9A144A2",
+    "title": "PHYM009",
+    "start": "2026-09-25T13:30:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "PHY/514"
+    },
+    "end": "2026-09-25T15:30:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000A33D33CDF02BDD01000000000000000010000000114E1D1B62FF60459C85F755B337681E",
