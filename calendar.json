@@ -3643,7 +3643,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P02/01 - Frontiers in Science 2",
+    "title": "NSC2001_P12/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3655,7 +3655,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P12/01 - Frontiers in Science 2",
+    "title": "NSC2001_P02/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -4555,7 +4555,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000000389CD51D8F8DC0100000000000000001000000030E0FA2681D0064785171098ED072121",
-    "title": "PHYM503",
+    "title": "PHYM503 Preparation",
     "start": "2026-06-11T16:00:00+01:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -4675,7 +4675,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E008000000008F650432B530DD01000000000000000010000000F60759BED3602B4A975C7E3BE0AFA2CA",
-    "title": "PHYM503",
+    "title": "PHYM503 Preparation",
     "start": "2026-08-26T16:00:00+01:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -4863,19 +4863,19 @@
       "calendar": "Teaching",
       "location": "AMO/C417"
     },
-    "end": "2026-09-23T14:25:00+01:00"
+    "end": "2026-09-23T14:00:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000DEAFE7ABB749DD0100000000000000001000000098D63DBC0E12A442A69805B0D5FAEFB9",
     "title": "NSCTut2",
-    "start": "2026-09-23T14:30:00+01:00",
+    "start": "2026-09-23T14:00:00+01:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
     "extendedProps": {
       "calendar": "Teaching",
-      "location": "Roundhouse Café"
+      "location": "AMO"
     },
-    "end": "2026-09-23T15:00:00+01:00"
+    "end": "2026-09-23T14:45:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000B18D678DB349DD01000000000000000010000000EE1DFD9F87C15F48B58B1E4202499D9F",
@@ -4888,6 +4888,18 @@
       "location": "Roundhouse Café"
     },
     "end": "2026-09-24T12:00:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000275FCA69724BDD01000000000000000010000000CEC0B29B15E5F744ABBAC361AB42FA31",
+    "title": "PHYM503 Preparation",
+    "start": "2026-09-24T14:00:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "PHY/514"
+    },
+    "end": "2026-09-24T14:30:00+01:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000F8386728B249DD01000000000000000010000000412CAC4DEDE2864DB8DE89ADF7F9FD5A",
@@ -4924,6 +4936,30 @@
       "location": "PHY/514"
     },
     "end": "2026-09-25T15:30:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E008000000005A6FD2FE6A4BDD0100000000000000001000000089C7B72C599F544AA909BF813AFBEC6D",
+    "title": "PHYM012_L2/01a - Solar and Extra-Solar Planets and Their Atmospheres",
+    "start": "2026-10-14T11:35:00+01:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "PCC/2.6"
+    },
+    "end": "2026-10-14T12:25:00+01:00"
+  },
+  {
+    "id": "Teaching-040000008200E00074C5B7101A82E00800000000A934651D6B4BDD01000000000000000010000000509713EEC67EBC4C96A887A044273D7F",
+    "title": "PHYM012_L1/01a - Solar and Extra-Solar Planets and Their Atmospheres",
+    "start": "2026-10-29T13:35:00+00:00",
+    "backgroundColor": "#F29900",
+    "borderColor": "#F29900",
+    "extendedProps": {
+      "calendar": "Teaching",
+      "location": "PHY/124"
+    },
+    "end": "2026-10-29T14:25:00+00:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000A33D33CDF02BDD01000000000000000010000000114E1D1B62FF60459C85F755B337681E",
