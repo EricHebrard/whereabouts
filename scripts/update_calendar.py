@@ -717,7 +717,7 @@ all_events = []
 
 for calendar_config in CALENDARS:
     calendar_name = calendar_config["name"]
-    ics_url = calendar_config["url"]
+    url = calendar_config["url"]
 
     print(
         f"Downloading "
