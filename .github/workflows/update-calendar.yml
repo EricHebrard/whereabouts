@@ -5,7 +5,6 @@ on:
 
   schedule:
     # Every 15 minutes, at :07, :22, :37 and :52.
-    # Using non-round minutes reduces the chance of GitHub Actions delays.
     - cron: "7,22,37,52 * * * *"
 
   push:
@@ -32,7 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install icalendar
+          python -m pip install --upgrade pip
+          python -m pip install icalendar
 
       - name: Download and convert calendars
         run: |
