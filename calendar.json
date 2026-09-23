@@ -1773,7 +1773,7 @@
       "calendar": "Academics",
       "location": "QUB"
     },
-    "end": "2026-09-23T10:00:00+01:00"
+    "end": "2026-09-23T09:45:00+01:00"
   },
   {
     "id": "Academics-040000008200E00074C5B7101A82E008000000001EDB4441DC07DD01000000000000000010000000BB7EAEC23AE8BC4B85FD80B97C10C165",
@@ -3221,6 +3221,18 @@
     "end": "2026-09-17T11:00:00+01:00"
   },
   {
+    "id": "Research-040000008200E00074C5B7101A82E008000000009ABD6E043E4BDD01000000000000000010000000EEE964D5E26E2147A0FB0D46AF127973",
+    "title": "Meeting with Roméo Veillet",
+    "start": "2026-09-18T14:30:00+01:00",
+    "backgroundColor": "#34A853",
+    "borderColor": "#34A853",
+    "extendedProps": {
+      "calendar": "Research",
+      "location": "PHY/514"
+    },
+    "end": "2026-09-18T15:30:00+01:00"
+  },
+  {
     "id": "Research-040000008200E00074C5B7101A82E008000000000C2077C7BE49DD01000000000000000010000000247FE79456F5124CBDCCABA968AB06A0",
     "title": "Meeting with Harry Baskett",
     "start": "2026-09-21T14:15:00+01:00",
@@ -3233,6 +3245,18 @@
     "end": "2026-09-21T15:00:00+01:00"
   },
   {
+    "id": "Research-040000008200E00074C5B7101A82E0080000000002D762143E4BDD01000000000000000010000000FE3A9696696A334EA15302F017632C8B",
+    "title": "Meeting with Roméo Veillet",
+    "start": "2026-09-22T13:30:00+01:00",
+    "backgroundColor": "#34A853",
+    "borderColor": "#34A853",
+    "extendedProps": {
+      "calendar": "Research",
+      "location": "PHY/509"
+    },
+    "end": "2026-09-22T14:15:00+01:00"
+  },
+  {
     "id": "Research-040000008200E00074C5B7101A82E0080000000008D4FE9ED749DD010000000000000000100000001F8FD166AB7C9146A12AB4AE8A5A343C",
     "title": "Meeting with Sophia Adams",
     "start": "2026-09-23T10:00:00+01:00",
@@ -3242,7 +3266,7 @@
       "calendar": "Research",
       "location": "Microsoft Teams"
     },
-    "end": "2026-09-23T11:00:00+01:00"
+    "end": "2026-09-23T10:30:00+01:00"
   },
   {
     "id": "Research-040000008200E00074C5B7101A82E00800000000E6E915B44286DC0100000000000000001000000005FFF08CF9BD974F8F9E0516264F346E",
