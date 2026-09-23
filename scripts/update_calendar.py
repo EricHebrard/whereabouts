@@ -1,10 +1,21 @@
+#!/usr/bin/env python3
+
 import json
 import urllib.request
-from datetime import datetime, date
+from datetime import date, timedelta, datetime
 
-from icalendar import Calendar
+import icalendar
+import recurring_ical_events
 
 
+# ============================================================
+# OUTLOOK CALENDAR URLS
+# ============================================================
+#
+# IMPORTANT:
+# Replace these four placeholders with the FOUR URLs from
+# your existing working update_calendar.py.
+#
 CALENDARS = [
     {
         "name": "Academics",
@@ -29,178 +40,327 @@ CALENDARS = [
 ]
 
 
+OUTPUT_FILE = "calendar.json"
+
+
+# ============================================================
+# RECURRENCE EXPANSION RANGE
+# ============================================================
+#
+# Outlook stores a recurring meeting as a single VEVENT
+# containing an RRULE.
+#
+# We expand that VEVENT into individual occurrences over
+# this rolling period.
+#
+# One year backwards
+# Two years forwards
+#
+EXPANSION_START = (
+    date.today() - timedelta(days=365)
+)
+
+EXPANSION_END = (
+    date.today() + timedelta(days=730)
+)
+
+
+# ============================================================
+# DOWNLOAD CALENDAR
+# ============================================================
+
 def download_calendar(url):
+
     request = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent":
+                "Mozilla/5.0 "
+                "(compatible; whereabouts-calendar/1.0)"
         }
     )
 
     with urllib.request.urlopen(
         request,
-        timeout=30
+        timeout=60
     ) as response:
+
         return response.read()
 
 
-def convert_value(value):
-    """
-    Convert an iCalendar property value into something
-    that can safely be written to JSON.
-    """
+# ============================================================
+# CONVERT ICALENDAR VALUES TO JSON-FRIENDLY TEXT
+# ============================================================
+
+def value_to_string(value):
 
     if value is None:
         return None
 
+
+    if isinstance(value, (datetime, date)):
+
+        return value.isoformat()
+
+
     if hasattr(value, "dt"):
-        value = value.dt
 
-    if isinstance(value, datetime):
-        return value.isoformat()
+        try:
 
-    if isinstance(value, date):
-        return value.isoformat()
+            dt = value.dt
 
-    if isinstance(value, bytes):
-        return value.decode(
-            "utf-8",
-            errors="replace"
-        )
+            if isinstance(
+                dt,
+                (datetime, date)
+            ):
 
-    if isinstance(value, (list, tuple)):
-        return [
-            convert_value(item)
-            for item in value
-        ]
+                return dt.isoformat()
 
-    if isinstance(value, dict):
-        return {
-            str(key): convert_value(item)
-            for key, item in value.items()
-        }
+        except Exception:
+            pass
+
+
+    if hasattr(value, "to_ical"):
+
+        try:
+
+            raw = value.to_ical()
+
+            if isinstance(raw, bytes):
+
+                return raw.decode(
+                    "utf-8",
+                    errors="replace"
+                )
+
+            return str(raw)
+
+        except Exception:
+            pass
+
 
     return str(value)
 
 
-def convert_datetime(value):
-    """
-    Convert an iCalendar datetime/date into an ISO 8601
-    string suitable for FullCalendar.
-    """
+# ============================================================
+# GET A SINGLE ICALENDAR PROPERTY
+# ============================================================
 
-    return convert_value(value)
-
-
-def get_property(component, name, default=None):
-    """
-    Safely retrieve an iCalendar property.
-    """
+def get_property(
+    component,
+    name
+):
 
     value = component.get(name)
 
-    if value is None:
-        return default
+    if isinstance(value, list):
 
-    return convert_value(value)
+        return [
+            value_to_string(item)
+            for item in value
+        ]
 
-
-def get_attendees(component):
-    """
-    Extract attendee information in a useful JSON format.
-    """
-
-    attendees = []
-
-    raw_attendees = component.get("ATTENDEE")
-
-    if not raw_attendees:
-        return attendees
-
-    if not isinstance(raw_attendees, list):
-        raw_attendees = [raw_attendees]
-
-    for attendee in raw_attendees:
-
-        email = str(attendee)
-
-        if email.lower().startswith("mailto:"):
-            email = email[7:]
-
-        params = getattr(attendee, "params", {})
-
-        attendees.append({
-            "email": email,
-            "name": str(params.get("CN", "")),
-            "role": str(params.get("ROLE", "")),
-            "status": str(params.get("PARTSTAT", "")),
-            "rsvp": str(params.get("RSVP", "")),
-        })
-
-    return attendees
+    return value_to_string(value)
 
 
-def get_organizer(component):
-    """
-    Extract organiser information.
-    """
-
-    organizer = component.get("ORGANIZER")
-
-    if not organizer:
-        return ""
-
-    value = str(organizer)
-
-    if value.lower().startswith("mailto:"):
-        value = value[7:]
-
-    params = getattr(organizer, "params", {})
-
-    name = str(params.get("CN", ""))
-
-    if name:
-        return f"{name} <{value}>"
-
-    return value
-
+# ============================================================
+# CATEGORIES
+# ============================================================
 
 def get_categories(component):
-    """
-    Extract CATEGORIES as a list.
-    """
 
-    categories = component.get("CATEGORIES")
+    value = component.get("CATEGORIES")
 
-    if not categories:
+    if value is None:
         return []
 
-    value = categories.to_ical().decode(
-        "utf-8",
-        errors="replace"
-    )
+
+    try:
+
+        return [
+            str(item)
+            for item in value.cats
+        ]
+
+    except Exception:
+        pass
+
+
+    if isinstance(value, list):
+
+        return [
+            value_to_string(item)
+            for item in value
+        ]
+
 
     return [
         item.strip()
-        for item in value.split(",")
+        for item in value_to_string(
+            value
+        ).split(",")
         if item.strip()
     ]
 
 
-def get_extra_properties(component):
-    """
-    Preserve additional VEVENT properties that are not
-    explicitly mapped into the FullCalendar event.
+# ============================================================
+# ORGANIZER
+# ============================================================
 
-    This means information isn't silently discarded merely
-    because we don't currently have a dedicated UI field for it.
-    """
+def get_organizer(component):
+
+    organizer = component.get(
+        "ORGANIZER"
+    )
+
+    if organizer is None:
+        return None
+
+
+    text = value_to_string(
+        organizer
+    )
+
+
+    common_name = None
+
+    if hasattr(
+        organizer,
+        "params"
+    ):
+
+        common_name = organizer.params.get(
+            "CN"
+        )
+
+
+    if common_name:
+
+        return (
+            f"{common_name} <{text}>"
+        )
+
+
+    return text
+
+
+# ============================================================
+# ATTENDEES
+# ============================================================
+
+def get_attendees(component):
+
+    attendees = component.get(
+        "ATTENDEE"
+    )
+
+    if attendees is None:
+        return []
+
+
+    if not isinstance(
+        attendees,
+        list
+    ):
+
+        attendees = [
+            attendees
+        ]
+
+
+    result = []
+
+
+    for attendee in attendees:
+
+        text = value_to_string(
+            attendee
+        )
+
+
+        if hasattr(
+            attendee,
+            "params"
+        ):
+
+            params = attendee.params
+
+        else:
+
+            params = {}
+
+
+        common_name = params.get(
+            "CN"
+        )
+
+        role = params.get(
+            "ROLE"
+        )
+
+        partstat = params.get(
+            "PARTSTAT"
+        )
+
+
+        if common_name:
+
+            label = (
+                f"{common_name} <{text}>"
+            )
+
+        else:
+
+            label = text
+
+
+        if role:
+
+            label += (
+                f" [{role}]"
+            )
+
+
+        if partstat:
+
+            label += (
+                f" ({partstat})"
+            )
+
+
+        result.append(label)
+
+
+    return result
+
+
+# ============================================================
+# PRESERVE OTHER ICALENDAR PROPERTIES
+# ============================================================
+#
+# This deliberately preserves fields that are not explicitly
+# mapped above, including:
+#
+#   RRULE
+#   RDATE
+#   EXDATE
+#   RECURRENCE-ID
+#   DTSTAMP
+#   CREATED
+#   LAST-MODIFIED
+#   SEQUENCE
+#   Outlook X-* properties
+#
+# ============================================================
+
+def get_extra_properties(component):
 
     known = {
         "UID",
         "SUMMARY",
         "DTSTART",
         "DTEND",
+        "DURATION",
         "LOCATION",
         "DESCRIPTION",
         "URL",
@@ -212,194 +372,444 @@ def get_extra_properties(component):
         "ATTENDEE",
     }
 
+
     extra = {}
 
-    for key, value in component.property_items():
 
-        key = str(key)
+    for name, value in (
+        component.property_items()
+    ):
 
-        if key in known:
+        if name in known:
             continue
 
-        converted = convert_value(value)
 
-        if key in extra:
+        converted = value_to_string(
+            value
+        )
 
-            if not isinstance(extra[key], list):
-                extra[key] = [extra[key]]
 
-            extra[key].append(converted)
+        if name in extra:
+
+            if not isinstance(
+                extra[name],
+                list
+            ):
+
+                extra[name] = [
+                    extra[name]
+                ]
+
+
+            extra[name].append(
+                converted
+            )
 
         else:
-            extra[key] = converted
+
+            extra[name] = converted
+
+
+    # --------------------------------------------------------
+    # Preserve VALARM components too.
+    # --------------------------------------------------------
+
+    alarms = []
+
+
+    for subcomponent in getattr(
+        component,
+        "subcomponents",
+        []
+    ):
+
+        if subcomponent.name != "VALARM":
+            continue
+
+
+        alarm_data = {}
+
+
+        for name, value in (
+            subcomponent.property_items()
+        ):
+
+            alarm_data[name] = (
+                value_to_string(value)
+            )
+
+
+        alarms.append(
+            alarm_data
+        )
+
+
+    if alarms:
+
+        extra["VALARM"] = alarms
+
 
     return extra
 
 
-def main():
+# ============================================================
+# CONVERT A VEVENT INTO A FULLCALENDAR EVENT
+# ============================================================
 
-    all_events = []
+def component_to_event(
+    component,
+    calendar_name
+):
 
-    for calendar_info in CALENDARS:
-
-        print(
-            f"Downloading {calendar_info['name']}..."
-        )
-
-        data = download_calendar(
-            calendar_info["url"]
-        )
-
-        calendar = Calendar.from_ical(data)
-
-        count = 0
-
-        for component in calendar.walk():
-
-            if component.name != "VEVENT":
-                continue
-
-            uid = str(
-                component.get("UID", "")
-            )
-
-            summary = str(
-                component.get(
-                    "SUMMARY",
-                    "Untitled event"
-                )
-            )
-
-            dtstart = component.get("DTSTART")
-
-            if not dtstart:
-                continue
-
-            start = convert_datetime(dtstart)
-
-            location = get_property(
-                component,
-                "LOCATION",
-                ""
-            )
-
-            description = get_property(
-                component,
-                "DESCRIPTION",
-                ""
-            )
-
-            url = get_property(
-                component,
-                "URL",
-                ""
-            )
-
-            event = {
-                "id": (
-                    f"{calendar_info['name']}-{uid}"
-                ),
-
-                "title": summary,
-
-                "start": start,
-
-                "backgroundColor":
-                    calendar_info["color"],
-
-                "borderColor":
-                    calendar_info["color"],
-
-                "extendedProps": {
-
-                    "calendar":
-                        calendar_info["name"],
-
-                    "location":
-                        location,
-
-                    "description":
-                        description,
-
-                    "url":
-                        url,
-
-                    "status":
-                        get_property(
-                            component,
-                            "STATUS",
-                            ""
-                        ),
-
-                    "transparency":
-                        get_property(
-                            component,
-                            "TRANSP",
-                            ""
-                        ),
-
-                    "categories":
-                        get_categories(component),
-
-                    "priority":
-                        get_property(
-                            component,
-                            "PRIORITY",
-                            ""
-                        ),
-
-                    "organizer":
-                        get_organizer(component),
-
-                    "attendees":
-                        get_attendees(component),
-
-                    "extra":
-                        get_extra_properties(component),
-                }
-            }
-
-            dtend = component.get("DTEND")
-
-            if dtend:
-                event["end"] = convert_datetime(dtend)
-
-            /*
-             * Preserve all-day events.
-             */
-            if (
-                hasattr(dtstart.dt, "year")
-                and not isinstance(
-                    dtstart.dt,
-                    datetime
-                )
-            ):
-                event["allDay"] = True
-
-            all_events.append(event)
-            count += 1
-
-        print(
-            f"  {count} events"
-        )
-
-    with open(
-        "calendar.json",
-        "w",
-        encoding="utf-8"
-    ) as file:
-
-        json.dump(
-            all_events,
-            file,
-            ensure_ascii=False,
-            indent=2
-        )
-
-    print(
-        f"Written {len(all_events)} events to calendar.json"
+    dtstart_property = (
+        component.get("DTSTART")
     )
 
 
-if __name__ == "__main__":
-    main()
+    if dtstart_property is None:
+        return None
+
+
+    start = dtstart_property.dt
+
+
+    # A date rather than datetime means
+    # this is an all-day event.
+    all_day = not isinstance(
+        start,
+        datetime
+    )
+
+
+    # --------------------------------------------------------
+    # End time
+    # --------------------------------------------------------
+
+    dtend_property = (
+        component.get("DTEND")
+    )
+
+
+    if dtend_property is not None:
+
+        end = dtend_property.dt
+
+
+    else:
+
+        duration_property = (
+            component.get("DURATION")
+        )
+
+
+        if duration_property is not None:
+
+            end = (
+                start +
+                duration_property.dt
+            )
+
+        else:
+
+            end = None
+
+
+    # --------------------------------------------------------
+    # UNIQUE EVENT ID
+    # --------------------------------------------------------
+    #
+    # A recurring Outlook event normally has one UID for the
+    # entire series. FullCalendar needs separate IDs for the
+    # individual occurrences.
+    #
+    # RECURRENCE-ID identifies an overridden occurrence.
+    # DTSTART provides the fallback.
+    #
+    # --------------------------------------------------------
+
+    uid = (
+        get_property(
+            component,
+            "UID"
+        )
+        or "no-uid"
+    )
+
+
+    recurrence_id = (
+        get_property(
+            component,
+            "RECURRENCE-ID"
+        )
+    )
+
+
+    occurrence_key = (
+        recurrence_id
+        or value_to_string(start)
+    )
+
+
+    event_id = (
+        f"{calendar_name}:"
+        f"{uid}:"
+        f"{occurrence_key}"
+    )
+
+
+    # --------------------------------------------------------
+    # EVENT
+    # --------------------------------------------------------
+
+    event = {
+
+        "id": event_id,
+
+        "title":
+            get_property(
+                component,
+                "SUMMARY"
+            )
+            or "(No title)",
+
+        "start":
+            value_to_string(start),
+
+        "allDay":
+            all_day,
+
+
+        "extendedProps": {
+
+            "calendar":
+                calendar_name,
+
+            "location":
+                get_property(
+                    component,
+                    "LOCATION"
+                ),
+
+            "description":
+                get_property(
+                    component,
+                    "DESCRIPTION"
+                ),
+
+            "url":
+                get_property(
+                    component,
+                    "URL"
+                ),
+
+            "status":
+                get_property(
+                    component,
+                    "STATUS"
+                ),
+
+            "transp":
+                get_property(
+                    component,
+                    "TRANSP"
+                ),
+
+            "categories":
+                get_categories(
+                    component
+                ),
+
+            "priority":
+                get_property(
+                    component,
+                    "PRIORITY"
+                ),
+
+            "organizer":
+                get_organizer(
+                    component
+                ),
+
+            "attendees":
+                get_attendees(
+                    component
+                ),
+
+            "extra":
+                get_extra_properties(
+                    component
+                ),
+        },
+    }
+
+
+    if end is not None:
+
+        event["end"] = (
+            value_to_string(end)
+        )
+
+
+    return event
+
+
+# ============================================================
+# EXPAND RECURRING EVENTS
+# ============================================================
+#
+# This is the main fix.
+#
+# recurring_ical_events expands:
+#
+#   RRULE
+#   RDATE
+#   EXDATE
+#   recurrence exceptions
+#
+# into individual VEVENT occurrences.
+#
+# ============================================================
+
+def expand_events(
+    calendar,
+    calendar_name
+):
+
+    query = (
+        recurring_ical_events.of(
+            calendar,
+            keep_recurrence_attributes=True
+        )
+    )
+
+
+    occurrences = query.between(
+        EXPANSION_START,
+        EXPANSION_END
+    )
+
+
+    events = []
+
+
+    for component in occurrences:
+
+        event = component_to_event(
+            component,
+            calendar_name
+        )
+
+
+        if event is not None:
+
+            events.append(event)
+
+
+    return events
+
+
+# ============================================================
+# PROCESS ALL FOUR CALENDARS
+# ============================================================
+
+all_events = []
+
+
+for calendar_name, url in (
+    CALENDARS.items()
+):
+
+    print(
+        f"Downloading "
+        f"{calendar_name} calendar..."
+    )
+
+
+    if (
+        not url
+        or "PASTE_" in url
+    ):
+
+        raise RuntimeError(
+            f"The ICS URL for "
+            f"{calendar_name} has not "
+            f"been configured. "
+            f"Copy the existing URL "
+            f"from your current script."
+        )
+
+
+    data = download_calendar(
+        url
+    )
+
+
+    calendar = (
+        icalendar.Calendar.from_ical(
+            data
+        )
+    )
+
+
+    all_events.extend(
+        expand_events(
+            calendar,
+            calendar_name
+        )
+    )
+
+
+# ============================================================
+# STABLE SORTING
+# ============================================================
+
+all_events.sort(
+    key=lambda event: (
+        event.get(
+            "start",
+            ""
+        ),
+
+        event.get(
+            "end",
+            ""
+        ),
+
+        event.get(
+            "title",
+            ""
+        ),
+
+        event.get(
+            "id",
+            ""
+        ),
+    )
+)
+
+
+# ============================================================
+# WRITE JSON
+# ============================================================
+
+with open(
+    OUTPUT_FILE,
+    "w",
+    encoding="utf-8"
+) as output:
+
+    json.dump(
+        all_events,
+        output,
+        ensure_ascii=False,
+        indent=2
+    )
+
+
+print(
+    f"Wrote "
+    f"{len(all_events)} event occurrences "
+    f"to {OUTPUT_FILE} "
+    f"for {EXPANSION_START} "
+    f"through {EXPANSION_END}."
+)
