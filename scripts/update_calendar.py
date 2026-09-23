@@ -16,7 +16,7 @@ import recurring_ical_events
 # Replace these four placeholders with the FOUR URLs from
 # your existing working update_calendar.py.
 #
-CALENDARS = [
+CALENDARS = {
     {
         "name": "Academics",
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/153c302eae1241669e5ac7cd0678fe7c5193535583262517238/calendar.ics",
@@ -37,7 +37,7 @@ CALENDARS = [
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/b2800759e43c4aae84d6f3c4cc34982d12859872542290148978/calendar.ics",
         "color": "#8E44AD",
     },
-]
+}
 
 
 OUTPUT_FILE = "calendar.json"
