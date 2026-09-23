@@ -1,725 +1,645 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>My whereabouts</title>
+    <title>My whereabouts</title>
 
-  <link
-    href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css"
-    rel="stylesheet"
-  >
+    <link
+        href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css"
+        rel="stylesheet"
+    >
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 
-    #calendar {
-      width: 100%;
-      height: 100vh;
-    }
+    <style>
 
-    .fc {
-      height: 100%;
-      font-size: 14px;
-    }
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-    .fc-toolbar {
-      padding: 6px 10px;
-      margin-bottom: 0 !important;
-    }
+        #calendar {
+            height: 100vh;
+        }
 
-    .fc-toolbar-title {
-      font-size: 1.2em !important;
-    }
+        /* ==================================================
+           EVENT MODAL
+           ================================================== */
 
-    .fc-button {
-      font-size: 0.9em !important;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            align-items: center;
+            justify-content: center;
+        }
 
-    .fc-event {
-      border-width: 0;
-      border-radius: 3px;
-      padding: 2px 4px;
-      cursor: pointer;
-    }
+        .modal.visible {
+            display: flex;
+        }
 
-    .fc-event-title {
-      font-weight: 500;
-    }
+        .modal-content {
+            position: relative;
+            background: white;
+            width: min(600px, calc(100% - 40px));
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 28px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        }
 
-    /*
-     * Event details dialog
-     */
-    #event-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(0, 0, 0, 0.45);
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            border: none;
+            background: transparent;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            color: #666;
+        }
 
-    #event-modal.visible {
-      display: flex;
-    }
+        .modal-close:hover {
+            color: #000;
+        }
 
-    #event-modal-content {
-      position: relative;
-      width: min(900px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      padding: 24px 28px;
-      box-sizing: border-box;
-    }
+        #modal-title {
+            margin: 0 40px 24px 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
 
-    #event-modal-close {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      border: 0;
-      background: transparent;
-      font-size: 28px;
-      line-height: 1;
-      cursor: pointer;
-      color: #666;
-    }
+        .detail-row {
+            margin-bottom: 20px;
+        }
 
-    #event-modal-close:hover {
-      color: #000;
-    }
+        .detail-label {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
 
-    #event-modal-title {
-      margin: 0 40px 8px 0;
-      font-size: 1.5em;
-    }
+        .detail-value {
+            line-height: 1.5;
+            color: #333;
+        }
 
-    #event-modal-calendar {
-      display: inline-block;
-      padding: 3px 8px;
-      margin-bottom: 18px;
-      border-radius: 4px;
-      color: white;
-      font-size: 0.85em;
-    }
+        .description {
+            white-space: normal;
+        }
 
-    .event-details {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      gap: 8px 16px;
-      margin-top: 10px;
-    }
+        /* ==================================================
+           RESPONSIVE MODAL
+           ================================================== */
 
-    .event-detail-label {
-      font-weight: bold;
-      color: #555;
-    }
+        @media (max-width: 600px) {
 
-    .event-detail-value {
-      overflow-wrap: anywhere;
-    }
+            .modal-content {
+                width: calc(100% - 20px);
+                max-height: calc(100vh - 20px);
+                padding: 22px;
+            }
 
-    .event-description {
-      white-space: pre-wrap;
-      line-height: 1.45;
-    }
+            #modal-title {
+                font-size: 1.2rem;
+            }
 
-    .event-detail-value a {
-      color: #1565c0;
-      text-decoration: underline;
-    }
+        }
 
-    .event-detail-section {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid #ddd;
-    }
-
-    .event-detail-section h3 {
-      margin: 0 0 10px;
-      font-size: 1em;
-    }
-
-    .event-attendees {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .event-attendees li {
-      margin-bottom: 4px;
-    }
-
-    /*
-     * Make longer events easier to read.
-     */
-    .fc-daygrid-event {
-      white-space: normal;
-    }
-
-    @media (max-width: 700px) {
-      .fc-toolbar {
-        flex-wrap: wrap;
-      }
-
-      .fc-toolbar-title {
-        font-size: 1em !important;
-      }
-
-      #event-modal {
-        padding: 8px;
-      }
-
-      #event-modal-content {
-        max-height: 95vh;
-        padding: 20px;
-      }
-
-      .event-details {
-        grid-template-columns: 1fr;
-        gap: 3px;
-      }
-
-      .event-detail-label {
-        margin-top: 8px;
-      }
-    }
-  </style>
+    </style>
 </head>
 
 <body>
 
-  <div id="calendar"></div>
+    <div id="calendar"></div>
 
-  <!-- Event details modal -->
-  <div id="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title">
 
-    <div id="event-modal-content">
+    <!-- ==================================================
+         EVENT DETAILS MODAL
+         ================================================== -->
 
-      <button
-        id="event-modal-close"
-        type="button"
-        aria-label="Close"
-      >
-        &times;
-      </button>
+    <div
+        id="event-modal"
+        class="modal"
+        aria-hidden="true"
+    >
 
-      <h2 id="event-modal-title"></h2>
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+        >
 
-      <div id="event-modal-calendar"></div>
+            <button
+                id="modal-close"
+                class="modal-close"
+                aria-label="Close"
+            >
+                &times;
+            </button>
 
-      <div id="event-modal-details"></div>
+            <h2 id="modal-title"></h2>
+
+            <div id="modal-body"></div>
+
+        </div>
 
     </div>
 
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
+    <script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
 
-      const response = await fetch('calendar.json?v=' + Date.now());
+                const calendarEl =
+                    document.getElementById(
+                        "calendar"
+                    );
 
-      if (!response.ok) {
-        throw new Error('Could not load calendar data.');
-      }
+                const modal =
+                    document.getElementById(
+                        "event-modal"
+                    );
 
-      const events = await response.json();
+                const modalTitle =
+                    document.getElementById(
+                        "modal-title"
+                    );
 
-      const calendar = new FullCalendar.Calendar(
-        document.getElementById('calendar'),
-        {
-          initialView: 'timeGridWeek',
+                const modalBody =
+                    document.getElementById(
+                        "modal-body"
+                    );
 
-          firstDay: 1,
+                const modalClose =
+                    document.getElementById(
+                        "modal-close"
+                    );
 
-          timeZone: 'Europe/London',
 
-          nowIndicator: true,
+                // ==================================================
+                // ESCAPE HTML
+                // ==================================================
 
-          height: '100%',
+                function escapeHtml(value) {
 
-          slotMinTime: '06:00:00',
-          slotMaxTime: '23:00:00',
+                    if (
+                        value === null ||
+                        value === undefined
+                    ) {
+                        return "";
+                    }
 
-          allDaySlot: true,
+                    return String(value)
+                        .replace(
+                            /&/g,
+                            "&amp;"
+                        )
+                        .replace(
+                            /</g,
+                            "&lt;"
+                        )
+                        .replace(
+                            />/g,
+                            "&gt;"
+                        )
+                        .replace(
+                            /"/g,
+                            "&quot;"
+                        )
+                        .replace(
+                            /'/g,
+                            "&#039;"
+                        );
+                }
 
-          weekends: true,
 
-          expandRows: true,
+                // ==================================================
+                // FORMAT DATE
+                // ==================================================
 
-          eventDisplay: 'block',
+                function formatDate(date) {
 
-          eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          },
+                    return date.toLocaleDateString(
+                        "en-GB",
+                        {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        }
+                    );
+                }
 
-          /*
-           * Display the title and location in the calendar itself.
-           * Clicking the event opens all of the available information.
-           */
-          eventContent: function(arg) {
 
-            const location = arg.event.extendedProps.location;
+                // ==================================================
+                // FORMAT TIME
+                // ==================================================
 
-            const container = document.createElement('div');
+                function formatTime(date) {
 
-            const title = document.createElement('div');
-            title.textContent = arg.event.title;
-            title.style.fontWeight = '500';
+                    return date.toLocaleTimeString(
+                        "en-GB",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false
+                        }
+                    );
+                }
 
-            container.appendChild(title);
 
-            if (location) {
-              const loc = document.createElement('div');
+                // ==================================================
+                // FORMAT EVENT TIME
+                // ==================================================
 
-              loc.textContent = location;
-              loc.style.fontSize = '0.85em';
-              loc.style.opacity = '0.9';
-              loc.style.marginTop = '2px';
+                function formatEventTime(event) {
 
-              container.appendChild(loc);
+                    const start = event.start;
+                    const end = event.end;
+
+                    if (!start) {
+                        return "";
+                    }
+
+
+                    // All-day event
+                    if (event.allDay) {
+
+                        if (end) {
+
+                            const endDate =
+                                new Date(end);
+
+                            endDate.setDate(
+                                endDate.getDate() - 1
+                            );
+
+                            return (
+                                formatDate(start)
+                                +
+                                " – "
+                                +
+                                formatDate(endDate)
+                            );
+                        }
+
+                        return formatDate(start);
+                    }
+
+
+                    // Timed event
+                    const dateText =
+                        formatDate(start);
+
+                    const startTime =
+                        formatTime(start);
+
+                    if (end) {
+
+                        const endTime =
+                            formatTime(end);
+
+                        return (
+                            dateText
+                            +
+                            ", "
+                            +
+                            startTime
+                            +
+                            " – "
+                            +
+                            endTime
+                        );
+                    }
+
+                    return (
+                        dateText
+                        +
+                        ", "
+                        +
+                        startTime
+                    );
+                }
+
+
+                // ==================================================
+                // FORMAT DESCRIPTION
+                // ==================================================
+
+                function formatDescription(
+                    description
+                ) {
+
+                    return escapeHtml(
+                        description
+                    )
+                        .replace(
+                            /\r\n/g,
+                            "<br>"
+                        )
+                        .replace(
+                            /\n/g,
+                            "<br>"
+                        )
+                        .replace(
+                            /\r/g,
+                            "<br>"
+                        );
+                }
+
+
+                // ==================================================
+                // OPEN MODAL
+                // ==================================================
+
+                function openModal(event) {
+
+                    const props =
+                        event.extendedProps;
+
+
+                    modalTitle.textContent =
+                        event.title;
+
+
+                    let html = "";
+
+
+                    // ------------------------------------------------
+                    // TIME
+                    // ------------------------------------------------
+
+                    html += `
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                Time
+                            </div>
+
+                            <div class="detail-value">
+                                ${escapeHtml(
+                                    formatEventTime(event)
+                                )}
+                            </div>
+                        </div>
+                    `;
+
+
+                    // ------------------------------------------------
+                    // LOCATION
+                    // ------------------------------------------------
+
+                    if (
+                        props.location &&
+                        props.location.trim()
+                    ) {
+
+                        html += `
+                            <div class="detail-row">
+                                <div class="detail-label">
+                                    Location
+                                </div>
+
+                                <div class="detail-value">
+                                    ${escapeHtml(
+                                        props.location
+                                    )}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+
+                    // ------------------------------------------------
+                    // DESCRIPTION
+                    // ------------------------------------------------
+
+                    if (
+                        props.description &&
+                        props.description.trim()
+                    ) {
+
+                        html += `
+                            <div class="detail-row">
+                                <div class="detail-label">
+                                    Description
+                                </div>
+
+                                <div class="detail-value description">
+                                    ${formatDescription(
+                                        props.description
+                                    )}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+
+                    modalBody.innerHTML =
+                        html;
+
+
+                    modal.classList.add(
+                        "visible"
+                    );
+
+                    modal.setAttribute(
+                        "aria-hidden",
+                        "false"
+                    );
+                }
+
+
+                // ==================================================
+                // CLOSE MODAL
+                // ==================================================
+
+                function closeModal() {
+
+                    modal.classList.remove(
+                        "visible"
+                    );
+
+                    modal.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+                }
+
+
+                // ==================================================
+                // CLOSE BUTTON
+                // ==================================================
+
+                modalClose.addEventListener(
+                    "click",
+                    closeModal
+                );
+
+
+                // ==================================================
+                // CLICK OUTSIDE MODAL
+                // ==================================================
+
+                modal.addEventListener(
+                    "click",
+                    function(event) {
+
+                        if (
+                            event.target === modal
+                        ) {
+
+                            closeModal();
+                        }
+                    }
+                );
+
+
+                // ==================================================
+                // ESCAPE KEY
+                // ==================================================
+
+                document.addEventListener(
+                    "keydown",
+                    function(event) {
+
+                        if (
+                            event.key === "Escape"
+                        ) {
+
+                            closeModal();
+                        }
+                    }
+                );
+
+
+                // ==================================================
+                // FULLCALENDAR
+                // ==================================================
+
+                const calendar =
+                    new FullCalendar.Calendar(
+                        calendarEl,
+                        {
+
+                            initialView:
+                                "timeGridWeek",
+
+                            firstDay: 1,
+
+                            timeZone:
+                                "Europe/London",
+
+                            nowIndicator:
+                                true,
+
+                            slotMinTime:
+                                "06:00:00",
+
+                            slotMaxTime:
+                                "23:00:00",
+
+                            allDaySlot:
+                                true,
+
+                            weekends:
+                                true,
+
+                            expandRows:
+                                true,
+
+                            headerToolbar: {
+
+                                left:
+                                    "prev,next today",
+
+                                center:
+                                    "title",
+
+                                right:
+                                    "timeGridWeek,dayGridMonth"
+                            },
+
+
+                            // ------------------------------------------------
+                            // LOAD EVENTS
+                            // ------------------------------------------------
+
+                            events:
+                                "calendar.json?v="
+                                +
+                                Date.now(),
+
+
+                            // ------------------------------------------------
+                            // EVENT DISPLAY
+                            // ------------------------------------------------
+
+                            eventDisplay:
+                                "block",
+
+
+                            // ------------------------------------------------
+                            // EVENT CLICK
+                            // ------------------------------------------------
+
+                            eventClick:
+                                function(info) {
+
+                                    info.jsEvent.preventDefault();
+
+                                    openModal(
+                                        info.event
+                                    );
+                                },
+
+
+                            // ------------------------------------------------
+                            // EVENT TOOLTIP
+                            // ------------------------------------------------
+
+                            eventDidMount:
+                                function(info) {
+
+                                    const location =
+                                        info.event
+                                            .extendedProps
+                                            .location;
+
+                                    if (
+                                        location
+                                    ) {
+
+                                        info.el.title =
+                                            location;
+                                    }
+                                }
+
+                        }
+                    );
+
+
+                calendar.render();
+
             }
-
-            return {
-              domNodes: [container]
-            };
-          },
-
-          headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'timeGridWeek,dayGridMonth'
-          },
-
-          buttonText: {
-            today: 'Today',
-            week: 'Week',
-            month: 'Month'
-          },
-
-          events: events,
-
-          /*
-           * Clicking an event opens the complete event information.
-           */
-          eventClick: function(info) {
-            info.jsEvent.preventDefault();
-            showEventDetails(info.event);
-          }
-        }
-      );
-
-      calendar.render();
-
-
-      /*
-       * ------------------------------------------------------------------
-       * Event details modal
-       * ------------------------------------------------------------------
-       */
-
-      const modal = document.getElementById('event-modal');
-      const modalTitle = document.getElementById('event-modal-title');
-      const modalCalendar = document.getElementById('event-modal-calendar');
-      const modalDetails = document.getElementById('event-modal-details');
-      const modalClose = document.getElementById('event-modal-close');
-
-
-      function escapeHtml(value) {
-
-        if (value === null || value === undefined) {
-          return '';
-        }
-
-        return String(value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
-
-
-      function linkify(value) {
-
-        if (!value) {
-          return '';
-        }
-
-        const escaped = escapeHtml(value);
-
-        return escaped.replace(
-          /(https?:\/\/[^\s<]+)/g,
-          '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
-        );
-      }
-
-
-      function formatDate(date) {
-
-        if (!date) {
-          return '';
-        }
-
-        return new Intl.DateTimeFormat(
-          'en-GB',
-          {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Europe/London'
-          }
-        ).format(date);
-      }
-
-
-      function formatDateOnly(date) {
-
-        if (!date) {
-          return '';
-        }
-
-        return new Intl.DateTimeFormat(
-          'en-GB',
-          {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            timeZone: 'Europe/London'
-          }
-        ).format(date);
-      }
-
-
-      function addDetail(label, value, options = {}) {
-
-        if (
-          value === null ||
-          value === undefined ||
-          value === ''
-        ) {
-          return;
-        }
-
-        const row = document.createElement('div');
-        row.className = 'event-details';
-
-        const labelElement = document.createElement('div');
-        labelElement.className = 'event-detail-label';
-        labelElement.textContent = label;
-
-        const valueElement = document.createElement('div');
-        valueElement.className = 'event-detail-value';
-
-        if (options.description) {
-          valueElement.className += ' event-description';
-          valueElement.textContent = value;
-        }
-        else if (options.url) {
-          const link = document.createElement('a');
-          link.href = value;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          link.textContent = value;
-          valueElement.appendChild(link);
-        }
-        else {
-          valueElement.textContent = value;
-        }
-
-        row.appendChild(labelElement);
-        row.appendChild(valueElement);
-
-        modalDetails.appendChild(row);
-      }
-
-
-      function showEventDetails(event) {
-
-        const props = event.extendedProps;
-
-        modalTitle.textContent = event.title || 'Untitled event';
-
-        modalCalendar.textContent =
-          props.calendar || 'Calendar';
-
-        modalCalendar.style.backgroundColor =
-          event.backgroundColor || '#666';
-
-
-        modalDetails.innerHTML = '';
-
-
-        /*
-         * Date/time
-         */
-        if (event.allDay) {
-
-          addDetail(
-            'Date',
-            formatDateOnly(event.start)
-          );
-
-          if (event.end) {
-            addDetail(
-              'End date',
-              formatDateOnly(
-                new Date(event.end.getTime() - 1)
-              )
-            );
-          }
-
-        } else {
-
-          addDetail(
-            'Start',
-            formatDate(event.start)
-          );
-
-          addDetail(
-            'End',
-            formatDate(event.end)
-          );
-        }
-
-
-        /*
-         * Standard Outlook/iCalendar information.
-         */
-        addDetail(
-          'Location',
-          props.location
         );
 
-        addDetail(
-          'Description',
-          props.description,
-          { description: true }
-        );
-
-        addDetail(
-          'URL',
-          props.url,
-          { url: true }
-        );
-
-        addDetail(
-          'Status',
-          props.status
-        );
-
-        addDetail(
-          'Transparency',
-          props.transparency
-        );
-
-        addDetail(
-          'Categories',
-          Array.isArray(props.categories)
-            ? props.categories.join(', ')
-            : props.categories
-        );
-
-        addDetail(
-          'Priority',
-          props.priority
-        );
-
-        addDetail(
-          'Organizer',
-          props.organizer
-        );
-
-
-        /*
-         * Attendees
-         */
-        if (
-          Array.isArray(props.attendees) &&
-          props.attendees.length > 0
-        ) {
-
-          const section = document.createElement('div');
-          section.className = 'event-detail-section';
-
-          const heading = document.createElement('h3');
-          heading.textContent = 'Attendees';
-
-          section.appendChild(heading);
-
-          const list = document.createElement('ul');
-          list.className = 'event-attendees';
-
-          props.attendees.forEach(function(attendee) {
-
-            const li = document.createElement('li');
-
-            if (typeof attendee === 'string') {
-              li.textContent = attendee;
-            } else {
-
-              const name = attendee.name || attendee.email || 'Attendee';
-
-              li.textContent = name;
-
-              const details = [];
-
-              if (attendee.email) {
-                details.push(attendee.email);
-              }
-
-              if (attendee.role) {
-                details.push(attendee.role);
-              }
-
-              if (attendee.status) {
-                details.push(attendee.status);
-              }
-
-              if (details.length) {
-                li.textContent +=
-                  ' (' + details.join(', ') + ')';
-              }
-            }
-
-            list.appendChild(li);
-          });
-
-          section.appendChild(list);
-          modalDetails.appendChild(section);
-        }
-
-
-        /*
-         * Additional iCalendar properties.
-         *
-         * The Python script preserves these in "extra".
-         */
-        if (
-          props.extra &&
-          Object.keys(props.extra).length > 0
-        ) {
-
-          const section = document.createElement('div');
-          section.className = 'event-detail-section';
-
-          const heading = document.createElement('h3');
-          heading.textContent = 'Additional information';
-
-          section.appendChild(heading);
-
-          const details = document.createElement('div');
-          details.className = 'event-details';
-
-          Object.entries(props.extra).forEach(
-            function([key, value]) {
-
-              if (
-                value === null ||
-                value === undefined ||
-                value === ''
-              ) {
-                return;
-              }
-
-              const label = document.createElement('div');
-              label.className = 'event-detail-label';
-              label.textContent = key;
-
-              const content = document.createElement('div');
-              content.className = 'event-detail-value';
-
-              if (Array.isArray(value)) {
-                content.textContent =
-                  value.join(', ');
-              } else if (
-                typeof value === 'object'
-              ) {
-                content.textContent =
-                  JSON.stringify(value, null, 2);
-              } else {
-                content.textContent = value;
-              }
-
-              details.appendChild(label);
-              details.appendChild(content);
-            }
-          );
-
-          section.appendChild(details);
-          modalDetails.appendChild(section);
-        }
-
-
-        modal.classList.add('visible');
-        modalClose.focus();
-      }
-
-
-      function closeModal() {
-        modal.classList.remove('visible');
-      }
-
-
-      modalClose.addEventListener(
-        'click',
-        closeModal
-      );
-
-
-      /*
-       * Clicking outside the dialog closes it.
-       */
-      modal.addEventListener(
-        'click',
-        function(event) {
-
-          if (event.target === modal) {
-            closeModal();
-          }
-        }
-      );
-
-
-      /*
-       * Escape closes the dialog.
-       */
-      document.addEventListener(
-        'keydown',
-        function(event) {
-
-          if (
-            event.key === 'Escape' &&
-            modal.classList.contains('visible')
-          ) {
-            closeModal();
-          }
-        }
-      );
-
-    });
-  </script>
+    </script>
 
 </body>
 </html>
