@@ -1,6 +1,6 @@
 import json
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, date
 
 from icalendar import Calendar
 
@@ -37,26 +37,203 @@ def download_calendar(url):
         }
     )
 
-    with urllib.request.urlopen(request, timeout=30) as response:
+    with urllib.request.urlopen(
+        request,
+        timeout=30
+    ) as response:
         return response.read()
 
 
-def convert_datetime(value):
+def convert_value(value):
     """
-    Convert an iCalendar datetime/date into an ISO 8601 string
-    suitable for FullCalendar.
+    Convert an iCalendar property value into something
+    that can safely be written to JSON.
     """
+
+    if value is None:
+        return None
 
     if hasattr(value, "dt"):
         value = value.dt
 
     if isinstance(value, datetime):
-        if value.tzinfo is None:
-            return value.isoformat()
         return value.isoformat()
 
-    # All-day event
-    return value.isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+
+    if isinstance(value, bytes):
+        return value.decode(
+            "utf-8",
+            errors="replace"
+        )
+
+    if isinstance(value, (list, tuple)):
+        return [
+            convert_value(item)
+            for item in value
+        ]
+
+    if isinstance(value, dict):
+        return {
+            str(key): convert_value(item)
+            for key, item in value.items()
+        }
+
+    return str(value)
+
+
+def convert_datetime(value):
+    """
+    Convert an iCalendar datetime/date into an ISO 8601
+    string suitable for FullCalendar.
+    """
+
+    return convert_value(value)
+
+
+def get_property(component, name, default=None):
+    """
+    Safely retrieve an iCalendar property.
+    """
+
+    value = component.get(name)
+
+    if value is None:
+        return default
+
+    return convert_value(value)
+
+
+def get_attendees(component):
+    """
+    Extract attendee information in a useful JSON format.
+    """
+
+    attendees = []
+
+    raw_attendees = component.get("ATTENDEE")
+
+    if not raw_attendees:
+        return attendees
+
+    if not isinstance(raw_attendees, list):
+        raw_attendees = [raw_attendees]
+
+    for attendee in raw_attendees:
+
+        email = str(attendee)
+
+        if email.lower().startswith("mailto:"):
+            email = email[7:]
+
+        params = getattr(attendee, "params", {})
+
+        attendees.append({
+            "email": email,
+            "name": str(params.get("CN", "")),
+            "role": str(params.get("ROLE", "")),
+            "status": str(params.get("PARTSTAT", "")),
+            "rsvp": str(params.get("RSVP", "")),
+        })
+
+    return attendees
+
+
+def get_organizer(component):
+    """
+    Extract organiser information.
+    """
+
+    organizer = component.get("ORGANIZER")
+
+    if not organizer:
+        return ""
+
+    value = str(organizer)
+
+    if value.lower().startswith("mailto:"):
+        value = value[7:]
+
+    params = getattr(organizer, "params", {})
+
+    name = str(params.get("CN", ""))
+
+    if name:
+        return f"{name} <{value}>"
+
+    return value
+
+
+def get_categories(component):
+    """
+    Extract CATEGORIES as a list.
+    """
+
+    categories = component.get("CATEGORIES")
+
+    if not categories:
+        return []
+
+    value = categories.to_ical().decode(
+        "utf-8",
+        errors="replace"
+    )
+
+    return [
+        item.strip()
+        for item in value.split(",")
+        if item.strip()
+    ]
+
+
+def get_extra_properties(component):
+    """
+    Preserve additional VEVENT properties that are not
+    explicitly mapped into the FullCalendar event.
+
+    This means information isn't silently discarded merely
+    because we don't currently have a dedicated UI field for it.
+    """
+
+    known = {
+        "UID",
+        "SUMMARY",
+        "DTSTART",
+        "DTEND",
+        "LOCATION",
+        "DESCRIPTION",
+        "URL",
+        "STATUS",
+        "TRANSP",
+        "CATEGORIES",
+        "PRIORITY",
+        "ORGANIZER",
+        "ATTENDEE",
+    }
+
+    extra = {}
+
+    for key, value in component.property_items():
+
+        key = str(key)
+
+        if key in known:
+            continue
+
+        converted = convert_value(value)
+
+        if key in extra:
+
+            if not isinstance(extra[key], list):
+                extra[key] = [extra[key]]
+
+            extra[key].append(converted)
+
+        else:
+            extra[key] = converted
+
+    return extra
 
 
 def main():
@@ -65,9 +242,14 @@ def main():
 
     for calendar_info in CALENDARS:
 
-        print(f"Downloading {calendar_info['name']}...")
+        print(
+            f"Downloading {calendar_info['name']}..."
+        )
 
-        data = download_calendar(calendar_info["url"])
+        data = download_calendar(
+            calendar_info["url"]
+        )
+
         calendar = Calendar.from_ical(data)
 
         count = 0
@@ -77,10 +259,15 @@ def main():
             if component.name != "VEVENT":
                 continue
 
-            uid = str(component.get("UID", ""))
+            uid = str(
+                component.get("UID", "")
+            )
 
             summary = str(
-                component.get("SUMMARY", "Untitled event")
+                component.get(
+                    "SUMMARY",
+                    "Untitled event"
+                )
             )
 
             dtstart = component.get("DTSTART")
@@ -90,17 +277,85 @@ def main():
 
             start = convert_datetime(dtstart)
 
-            location = str(component.get("LOCATION", ""))
+            location = get_property(
+                component,
+                "LOCATION",
+                ""
+            )
+
+            description = get_property(
+                component,
+                "DESCRIPTION",
+                ""
+            )
+
+            url = get_property(
+                component,
+                "URL",
+                ""
+            )
 
             event = {
-                "id": f"{calendar_info['name']}-{uid}",
+                "id": (
+                    f"{calendar_info['name']}-{uid}"
+                ),
+
                 "title": summary,
+
                 "start": start,
-                "backgroundColor": calendar_info["color"],
-                "borderColor": calendar_info["color"],
+
+                "backgroundColor":
+                    calendar_info["color"],
+
+                "borderColor":
+                    calendar_info["color"],
+
                 "extendedProps": {
-                    "calendar": calendar_info["name"],
-                    "location": location
+
+                    "calendar":
+                        calendar_info["name"],
+
+                    "location":
+                        location,
+
+                    "description":
+                        description,
+
+                    "url":
+                        url,
+
+                    "status":
+                        get_property(
+                            component,
+                            "STATUS",
+                            ""
+                        ),
+
+                    "transparency":
+                        get_property(
+                            component,
+                            "TRANSP",
+                            ""
+                        ),
+
+                    "categories":
+                        get_categories(component),
+
+                    "priority":
+                        get_property(
+                            component,
+                            "PRIORITY",
+                            ""
+                        ),
+
+                    "organizer":
+                        get_organizer(component),
+
+                    "attendees":
+                        get_attendees(component),
+
+                    "extra":
+                        get_extra_properties(component),
                 }
             }
 
@@ -109,18 +364,31 @@ def main():
             if dtend:
                 event["end"] = convert_datetime(dtend)
 
-            # Preserve all-day events.
-            if hasattr(dtstart.dt, "year") and not isinstance(
-                dtstart.dt, datetime
+            /*
+             * Preserve all-day events.
+             */
+            if (
+                hasattr(dtstart.dt, "year")
+                and not isinstance(
+                    dtstart.dt,
+                    datetime
+                )
             ):
                 event["allDay"] = True
 
             all_events.append(event)
             count += 1
 
-        print(f"  {count} events")
+        print(
+            f"  {count} events"
+        )
 
-    with open("calendar.json", "w", encoding="utf-8") as file:
+    with open(
+        "calendar.json",
+        "w",
+        encoding="utf-8"
+    ) as file:
+
         json.dump(
             all_events,
             file,
@@ -128,7 +396,9 @@ def main():
             indent=2
         )
 
-    print(f"Written {len(all_events)} events to calendar.json")
+    print(
+        f"Written {len(all_events)} events to calendar.json"
+    )
 
 
 if __name__ == "__main__":
