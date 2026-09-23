@@ -715,9 +715,9 @@ def expand_events(
 all_events = []
 
 
-for calendar_name, url in (
-    CALENDARS.items()
-):
+for calendar_config in CALENDARS:
+    calendar_name = calendar_config["name"]
+    ics_url = calendar_config["url"]
 
     print(
         f"Downloading "
