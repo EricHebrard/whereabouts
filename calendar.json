@@ -1,17 +1,5 @@
 [
   {
-    "id": "Academics-040000008200E00074C5B7101A82E008000000000C72E085324FDC01000000000000000010000000B6277111BBD6264998AA50978A932407",
-    "title": "Town Hall: Achieving a Seamless Partnership (UoE/MO)",
-    "start": "2025-09-22T14:00:00+01:00",
-    "backgroundColor": "#4285F4",
-    "borderColor": "#4285F4",
-    "extendedProps": {
-      "calendar": "Academics",
-      "location": "PHY/124"
-    },
-    "end": "2025-09-22T15:00:00+01:00"
-  },
-  {
     "id": "Academics-040000008200E00074C5B7101A82E008000000004F538218F62DDC010000000000000000100000007CF08E6521ACF84F8C861D7A61E6304A",
     "title": "Performance Development Review (PDR) with Matthew Bate",
     "start": "2025-10-01T09:30:00+01:00",
@@ -1224,7 +1212,7 @@
     "end": "2026-06-02T13:00:00+01:00"
   },
   {
-    "id": "Academics-040000008200E00074C5B7101A82E00800000000066386119A08DD0100000000000000001000000094444D1CBC40914EAE38490C5EB0DE71",
+    "id": "Academics-040000008200E00074C5B7101A82E00800000000005046AEAAF1DC01000000000000000010000000E23313B4ACB2B749B31D74B37F8D4FBD",
     "title": "Faculty Education and Student Experience Committee Meeting",
     "start": "2026-06-03T11:30:00+01:00",
     "backgroundColor": "#4285F4",
@@ -1236,7 +1224,7 @@
     "end": "2026-06-03T13:00:00+01:00"
   },
   {
-    "id": "Academics-040000008200E00074C5B7101A82E00800000000005046AEAAF1DC01000000000000000010000000E23313B4ACB2B749B31D74B37F8D4FBD",
+    "id": "Academics-040000008200E00074C5B7101A82E00800000000066386119A08DD0100000000000000001000000094444D1CBC40914EAE38490C5EB0DE71",
     "title": "Faculty Education and Student Experience Committee Meeting",
     "start": "2026-06-03T11:30:00+01:00",
     "backgroundColor": "#4285F4",
@@ -1825,30 +1813,6 @@
     },
     "end": "2026-11-05",
     "allDay": true
-  },
-  {
-    "id": "Research-040000008200E00074C5B7101A82E008000000006AA7207DAD2BDC01000000000000000010000000CBCF413203E0B94E9E6414EF27F1D4AC",
-    "title": "Meeting with Harry Baskett and Roméo Veillet",
-    "start": "2025-09-22T10:00:00+01:00",
-    "backgroundColor": "#34A853",
-    "borderColor": "#34A853",
-    "extendedProps": {
-      "calendar": "Research",
-      "location": "PHY/514"
-    },
-    "end": "2025-09-22T11:00:00+01:00"
-  },
-  {
-    "id": "Research-040000008200E00074C5B7101A82E00800000000BE00D779AD2BDC010000000000000000100000007C3180C2BBCC9F4B9670DBC65A8DF9FD",
-    "title": "Meeting with Harry Baskett",
-    "start": "2025-09-22T11:45:00+01:00",
-    "backgroundColor": "#34A853",
-    "borderColor": "#34A853",
-    "extendedProps": {
-      "calendar": "Research",
-      "location": "PHY/514"
-    },
-    "end": "2025-09-22T12:30:00+01:00"
   },
   {
     "id": "Research-040000008200E00074C5B7101A82E008000000005632BBE66E2CDC010000000000000000100000008D92A41B6546F5469EDA3A950DE72A3F",
@@ -3342,18 +3306,6 @@
     "end": "2026-12-17T14:00:00+00:00"
   },
   {
-    "id": "Teaching-040000008200E00074C5B7101A82E0080000000094E2DC99D320DC0100000000000000001000000028D177B53C24604A80537FAEFF73ECD6",
-    "title": "NSC1003_L08/01 - Introduction to NSC1003",
-    "start": "2025-09-22T11:05:00+01:00",
-    "backgroundColor": "#F29900",
-    "borderColor": "#F29900",
-    "extendedProps": {
-      "calendar": "Teaching",
-      "location": "LSI/SRB"
-    },
-    "end": "2025-09-22T11:25:00+01:00"
-  },
-  {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000ECE33E554DF6DB01000000000000000010000000321AE7046720CC4DBFFAD77354EBAD05",
     "title": "PHYM012_L1/01 - Solar and Extra-Solar Planets and Their Atmospheres",
     "start": "2025-09-23T09:35:00+01:00",
@@ -3667,7 +3619,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P12/01 - Frontiers in Science 2",
+    "title": "NSC2001_P02/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3679,7 +3631,7 @@
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E0080000000060C061B3E8F7DB010000000000000000100000002A97B50715264A4F8C0EC712ECF6A33C",
-    "title": "NSC2001_P02/01 - Frontiers in Science 2",
+    "title": "NSC2001_P12/01 - Frontiers in Science 2",
     "start": "2025-11-27T13:35:00+00:00",
     "backgroundColor": "#F29900",
     "borderColor": "#F29900",
@@ -3939,7 +3891,7 @@
       "calendar": "Teaching",
       "location": "PHY/514"
     },
-    "end": "2026-01-23T15:45:00+00:00"
+    "end": "2026-01-23T15:30:00+00:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000DB19EFAC1F8BDC01000000000000000010000000E6C3B1AD254DFC489A75A87B8D62653A",
@@ -3951,7 +3903,7 @@
       "calendar": "Teaching",
       "location": "PHY/514"
     },
-    "end": "2026-01-23T15:30:00+00:00"
+    "end": "2026-01-23T15:45:00+00:00"
   },
   {
     "id": "Teaching-040000008200E00074C5B7101A82E00800000000ED129B531F8ADC0100000000000000001000000040E8DAA541E5CF4580FF25DB01215248",
