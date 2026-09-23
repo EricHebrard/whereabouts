@@ -9,13 +9,9 @@ import recurring_ical_events
 
 
 # ============================================================
-# OUTLOOK CALENDAR URLS
+# OUTLOOK CALENDARS
 # ============================================================
-#
-# IMPORTANT:
-# Replace these four placeholders with the FOUR URLs from
-# your existing working update_calendar.py.
-#
+
 CALENDARS = [
     {
         "name": "Academics",
@@ -46,16 +42,10 @@ OUTPUT_FILE = "calendar.json"
 # ============================================================
 # RECURRENCE EXPANSION RANGE
 # ============================================================
-#
-# Outlook stores a recurring meeting as a single VEVENT
-# containing an RRULE.
-#
-# We expand that VEVENT into individual occurrences over
-# this rolling period.
-#
-# One year backwards
-# Two years forwards
-#
+
+# Expand recurring events over a rolling period:
+# one year backwards and two years forwards.
+
 EXPANSION_START = (
     date.today() - timedelta(days=365)
 )
@@ -97,11 +87,8 @@ def value_to_string(value):
     if value is None:
         return None
 
-
     if isinstance(value, (datetime, date)):
-
         return value.isoformat()
-
 
     if hasattr(value, "dt"):
 
@@ -118,7 +105,6 @@ def value_to_string(value):
 
         except Exception:
             pass
-
 
     if hasattr(value, "to_ical"):
 
@@ -137,7 +123,6 @@ def value_to_string(value):
 
         except Exception:
             pass
-
 
     return str(value)
 
@@ -174,7 +159,6 @@ def get_categories(component):
     if value is None:
         return []
 
-
     try:
 
         return [
@@ -185,14 +169,12 @@ def get_categories(component):
     except Exception:
         pass
 
-
     if isinstance(value, list):
 
         return [
             value_to_string(item)
             for item in value
         ]
-
 
     return [
         item.strip()
@@ -216,11 +198,9 @@ def get_organizer(component):
     if organizer is None:
         return None
 
-
     text = value_to_string(
         organizer
     )
-
 
     common_name = None
 
@@ -233,13 +213,11 @@ def get_organizer(component):
             "CN"
         )
 
-
     if common_name:
 
         return (
             f"{common_name} <{text}>"
         )
-
 
     return text
 
@@ -257,7 +235,6 @@ def get_attendees(component):
     if attendees is None:
         return []
 
-
     if not isinstance(
         attendees,
         list
@@ -267,16 +244,13 @@ def get_attendees(component):
             attendees
         ]
 
-
     result = []
-
 
     for attendee in attendees:
 
         text = value_to_string(
             attendee
         )
-
 
         if hasattr(
             attendee,
@@ -288,7 +262,6 @@ def get_attendees(component):
         else:
 
             params = {}
-
 
         common_name = params.get(
             "CN"
@@ -302,7 +275,6 @@ def get_attendees(component):
             "PARTSTAT"
         )
 
-
         if common_name:
 
             label = (
@@ -313,13 +285,11 @@ def get_attendees(component):
 
             label = text
 
-
         if role:
 
             label += (
                 f" [{role}]"
             )
-
 
         if partstat:
 
@@ -327,30 +297,13 @@ def get_attendees(component):
                 f" ({partstat})"
             )
 
-
         result.append(label)
-
 
     return result
 
 
 # ============================================================
 # PRESERVE OTHER ICALENDAR PROPERTIES
-# ============================================================
-#
-# This deliberately preserves fields that are not explicitly
-# mapped above, including:
-#
-#   RRULE
-#   RDATE
-#   EXDATE
-#   RECURRENCE-ID
-#   DTSTAMP
-#   CREATED
-#   LAST-MODIFIED
-#   SEQUENCE
-#   Outlook X-* properties
-#
 # ============================================================
 
 def get_extra_properties(component):
@@ -372,9 +325,7 @@ def get_extra_properties(component):
         "ATTENDEE",
     }
 
-
     extra = {}
-
 
     for name, value in (
         component.property_items()
@@ -383,11 +334,9 @@ def get_extra_properties(component):
         if name in known:
             continue
 
-
         converted = value_to_string(
             value
         )
-
 
         if name in extra:
 
@@ -400,7 +349,6 @@ def get_extra_properties(component):
                     extra[name]
                 ]
 
-
             extra[name].append(
                 converted
             )
@@ -409,13 +357,11 @@ def get_extra_properties(component):
 
             extra[name] = converted
 
-
     # --------------------------------------------------------
     # Preserve VALARM components too.
     # --------------------------------------------------------
 
     alarms = []
-
 
     for subcomponent in getattr(
         component,
@@ -426,9 +372,7 @@ def get_extra_properties(component):
         if subcomponent.name != "VALARM":
             continue
 
-
         alarm_data = {}
-
 
         for name, value in (
             subcomponent.property_items()
@@ -438,40 +382,35 @@ def get_extra_properties(component):
                 value_to_string(value)
             )
 
-
         alarms.append(
             alarm_data
         )
-
 
     if alarms:
 
         extra["VALARM"] = alarms
 
-
     return extra
 
 
 # ============================================================
-# CONVERT A VEVENT INTO A FULLCALENDAR EVENT
+# CONVERT VEVENT INTO FULLCALENDAR EVENT
 # ============================================================
 
 def component_to_event(
     component,
-    calendar_name
+    calendar_name,
+    calendar_color
 ):
 
     dtstart_property = (
         component.get("DTSTART")
     )
 
-
     if dtstart_property is None:
         return None
 
-
     start = dtstart_property.dt
-
 
     # A date rather than datetime means
     # this is an all-day event.
@@ -479,7 +418,6 @@ def component_to_event(
         start,
         datetime
     )
-
 
     # --------------------------------------------------------
     # End time
@@ -489,18 +427,15 @@ def component_to_event(
         component.get("DTEND")
     )
 
-
     if dtend_property is not None:
 
         end = dtend_property.dt
-
 
     else:
 
         duration_property = (
             component.get("DURATION")
         )
-
 
         if duration_property is not None:
 
@@ -513,18 +448,8 @@ def component_to_event(
 
             end = None
 
-
     # --------------------------------------------------------
     # UNIQUE EVENT ID
-    # --------------------------------------------------------
-    #
-    # A recurring Outlook event normally has one UID for the
-    # entire series. FullCalendar needs separate IDs for the
-    # individual occurrences.
-    #
-    # RECURRENCE-ID identifies an overridden occurrence.
-    # DTSTART provides the fallback.
-    #
     # --------------------------------------------------------
 
     uid = (
@@ -535,7 +460,6 @@ def component_to_event(
         or "no-uid"
     )
 
-
     recurrence_id = (
         get_property(
             component,
@@ -543,19 +467,16 @@ def component_to_event(
         )
     )
 
-
     occurrence_key = (
         recurrence_id
         or value_to_string(start)
     )
-
 
     event_id = (
         f"{calendar_name}:"
         f"{uid}:"
         f"{occurrence_key}"
     )
-
 
     # --------------------------------------------------------
     # EVENT
@@ -578,11 +499,20 @@ def component_to_event(
         "allDay":
             all_day,
 
+        # Calendar colour
+        "backgroundColor":
+            calendar_color,
+
+        "borderColor":
+            calendar_color,
 
         "extendedProps": {
 
             "calendar":
                 calendar_name,
+
+            "color":
+                calendar_color,
 
             "location":
                 get_property(
@@ -642,13 +572,11 @@ def component_to_event(
         },
     }
 
-
     if end is not None:
 
         event["end"] = (
             value_to_string(end)
         )
-
 
     return event
 
@@ -656,23 +584,11 @@ def component_to_event(
 # ============================================================
 # EXPAND RECURRING EVENTS
 # ============================================================
-#
-# This is the main fix.
-#
-# recurring_ical_events expands:
-#
-#   RRULE
-#   RDATE
-#   EXDATE
-#   recurrence exceptions
-#
-# into individual VEVENT occurrences.
-#
-# ============================================================
 
 def expand_events(
     calendar,
-    calendar_name
+    calendar_name,
+    calendar_color
 ):
 
     query = (
@@ -682,28 +598,24 @@ def expand_events(
         )
     )
 
-
     occurrences = query.between(
         EXPANSION_START,
         EXPANSION_END
     )
 
-
     events = []
-
 
     for component in occurrences:
 
         event = component_to_event(
             component,
-            calendar_name
+            calendar_name,
+            calendar_color
         )
-
 
         if event is not None:
 
             events.append(event)
-
 
     return events
 
@@ -716,33 +628,38 @@ all_events = []
 
 
 for calendar_config in CALENDARS:
-    calendar_name = calendar_config["name"]
-    url = calendar_config["url"]
+
+    calendar_name = (
+        calendar_config["name"]
+    )
+
+    ics_url = (
+        calendar_config["url"]
+    )
+
+    calendar_color = (
+        calendar_config["color"]
+    )
 
     print(
         f"Downloading "
         f"{calendar_name} calendar..."
     )
 
-
     if (
-        not url
-        or "PASTE_" in url
+        not ics_url
+        or "PASTE_" in ics_url
     ):
 
         raise RuntimeError(
             f"The ICS URL for "
             f"{calendar_name} has not "
-            f"been configured. "
-            f"Copy the existing URL "
-            f"from your current script."
+            f"been configured."
         )
 
-
     data = download_calendar(
-        url
+        ics_url
     )
-
 
     calendar = (
         icalendar.Calendar.from_ical(
@@ -750,13 +667,18 @@ for calendar_config in CALENDARS:
         )
     )
 
-
-    all_events.extend(
-        expand_events(
-            calendar,
-            calendar_name
-        )
+    events = expand_events(
+        calendar,
+        calendar_name,
+        calendar_color
     )
+
+    print(
+        f"  Found {len(events)} "
+        f"event occurrences."
+    )
+
+    all_events.extend(events)
 
 
 # ============================================================
