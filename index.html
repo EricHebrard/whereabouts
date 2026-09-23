@@ -243,6 +243,11 @@
           },
 
           events: events
+
+          eventClick: function(info) {
+          info.jsEvent.preventDefault();
+          showEventDetails(info.event);
+}
         }
       );
 
