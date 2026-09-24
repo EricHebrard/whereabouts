@@ -46,7 +46,9 @@
       background: #fff;
     }
 
-    /* FullCalendar */
+    /* =========================================================
+       FullCalendar
+       ========================================================= */
 
     .fc {
       height: 100%;
@@ -79,7 +81,9 @@
       white-space: nowrap;
     }
 
-    /* Modal */
+    /* =========================================================
+       Event modal
+       ========================================================= */
 
     #event-modal {
       display: none;
@@ -118,7 +122,7 @@
     }
 
     /*
-     * This is the calendar/source badge.
+     * Source calendar badge.
      *
      * update_calendar.py creates:
      *
@@ -128,7 +132,7 @@
      *   ...
      * }
      *
-     * so this is populated directly from props.calendar.
+     * Therefore this displays the source calendar directly.
      */
 
     #event-modal-calendar {
@@ -189,15 +193,6 @@
       overflow-wrap: anywhere;
     }
 
-    .event-detail-value a {
-      color: #1769aa;
-      text-decoration: underline;
-    }
-
-    .event-description {
-      line-height: 1.5;
-    }
-
     @media (max-width: 600px) {
       #calendar {
         padding: 4px;
@@ -232,8 +227,16 @@
 
   <div id="calendar"></div>
 
-  <!-- Event details modal -->
-  <div id="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title">
+  <!-- =========================================================
+       Event details modal
+       ========================================================= -->
+
+  <div
+    id="event-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="event-modal-title"
+  >
 
     <div class="event-modal-content">
 
@@ -250,7 +253,7 @@
 
         <h2 id="event-modal-title">Event</h2>
 
-        <!-- Calendar/source name, e.g. Academics, Research, Teaching, Travel -->
+        <!-- Source calendar: Academics / Research / Teaching / Travel -->
         <span id="event-modal-calendar">Calendar</span>
 
       </div>
@@ -263,32 +266,31 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-      const calendarEl = document.getElementById("calendar");
+      const calendarEl =
+        document.getElementById("calendar");
 
-      const modal = document.getElementById("event-modal");
-      const modalTitle = document.getElementById("event-modal-title");
-      const modalCalendar = document.getElementById("event-modal-calendar");
-      const modalDetails = document.getElementById("event-modal-details");
-      const modalClose = document.getElementById("event-modal-close");
+      const modal =
+        document.getElementById("event-modal");
 
-      /*
-       * Escape text before putting event data into innerHTML.
-       * The event information originates from external ICS feeds.
-       */
-      function escapeHtml(value) {
-        if (value === null || value === undefined) {
-          return "";
-        }
+      const modalTitle =
+        document.getElementById("event-modal-title");
 
-        return String(value)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
+      const modalCalendar =
+        document.getElementById("event-modal-calendar");
 
-      function addDetail(label, value, options = {}) {
+      const modalDetails =
+        document.getElementById("event-modal-details");
+
+      const modalClose =
+        document.getElementById("event-modal-close");
+
+
+      /* =======================================================
+         Add a single detail row
+         ======================================================= */
+
+      function addDetail(label, value) {
+
         if (
           value === null ||
           value === undefined ||
@@ -297,37 +299,43 @@
           return;
         }
 
-        const row = document.createElement("div");
-        row.className = "event-detail";
+        const row =
+          document.createElement("div");
 
-        const labelEl = document.createElement("div");
-        labelEl.className = "event-detail-label";
-        labelEl.textContent = label;
+        row.className =
+          "event-detail";
 
-        const valueEl = document.createElement("div");
-        valueEl.className = "event-detail-value";
+        const labelEl =
+          document.createElement("div");
 
-        if (options.link) {
-          const link = document.createElement("a");
-          link.href = String(value);
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = String(value);
-          valueEl.appendChild(link);
-        } else {
-          valueEl.textContent = String(value);
-        }
+        labelEl.className =
+          "event-detail-label";
 
-        if (options.description) {
-          valueEl.classList.add("event-description");
-        }
+        labelEl.textContent =
+          label;
+
+        const valueEl =
+          document.createElement("div");
+
+        valueEl.className =
+          "event-detail-value";
+
+        valueEl.textContent =
+          String(value);
 
         row.appendChild(labelEl);
         row.appendChild(valueEl);
+
         modalDetails.appendChild(row);
       }
 
+
+      /* =======================================================
+         Format event date/time
+         ======================================================= */
+
       function formatEventDate(event) {
+
         const start = event.start;
         const end = event.end;
 
@@ -335,116 +343,172 @@
           return "";
         }
 
-        const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Europe/London",
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        });
+        const dateFormatter =
+          new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Europe/London",
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          });
 
-        const timeFormatter = new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Europe/London",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false
-        });
+        const timeFormatter =
+          new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Europe/London",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          });
+
 
         /*
-         * All-day events don't need a time.
+         * All-day events
          */
+
         if (event.allDay) {
-          if (end) {
-            const endDate = new Date(end);
 
-            /*
-             * FullCalendar treats an all-day end date as exclusive.
-             * For a single-day event, don't display a second date.
-             */
-            const startDate = new Date(start);
+          const startDate =
+            new Date(start);
 
-            if (
-              endDate.getTime() -
-              startDate.getTime() <=
-              24 * 60 * 60 * 1000
-            ) {
-              return dateFormatter.format(startDate);
-            }
-
-            const displayEnd = new Date(endDate);
-            displayEnd.setDate(displayEnd.getDate() - 1);
-
-            return (
-              dateFormatter.format(startDate) +
-              " – " +
-              dateFormatter.format(displayEnd)
-            );
+          if (!end) {
+            return dateFormatter.format(startDate);
           }
 
-          return dateFormatter.format(new Date(start));
+          const endDate =
+            new Date(end);
+
+          /*
+           * FullCalendar treats an all-day event's
+           * end date as exclusive.
+           *
+           * If the event lasts one day, display
+           * only the start date.
+           */
+
+          if (
+            endDate.getTime() -
+            startDate.getTime() <=
+            24 * 60 * 60 * 1000
+          ) {
+            return dateFormatter.format(startDate);
+          }
+
+          const displayEnd =
+            new Date(endDate);
+
+          displayEnd.setDate(
+            displayEnd.getDate() - 1
+          );
+
+          return (
+            dateFormatter.format(startDate) +
+            " – " +
+            dateFormatter.format(displayEnd)
+          );
         }
 
-        const startDate = new Date(start);
+
+        /*
+         * Timed events
+         */
+
+        const startDate =
+          new Date(start);
 
         let result =
           dateFormatter.format(startDate) +
           " " +
           timeFormatter.format(startDate);
 
-        if (end) {
-          const endDate = new Date(end);
 
-          result +=
-            " – " +
-            (
-              dateFormatter.format(startDate) ===
-              dateFormatter.format(endDate)
-                ? timeFormatter.format(endDate)
-                : dateFormatter.format(endDate) +
-                  " " +
-                  timeFormatter.format(endDate)
-            );
+        if (end) {
+
+          const endDate =
+            new Date(end);
+
+          const sameDate =
+            dateFormatter.format(startDate) ===
+            dateFormatter.format(endDate);
+
+          if (sameDate) {
+
+            result +=
+              " – " +
+              timeFormatter.format(endDate);
+
+          } else {
+
+            result +=
+              " – " +
+              dateFormatter.format(endDate) +
+              " " +
+              timeFormatter.format(endDate);
+          }
         }
 
         return result;
       }
 
+
+      /* =======================================================
+         Show event details
+         
+         IMPORTANT:
+         Only Calendar, When and Location are displayed.
+         ======================================================= */
+
       function showEventDetails(event) {
 
+        const props =
+          event.extendedProps || {};
+
+
         /*
-         * This is the important part:
-         *
-         * update_calendar.py puts the source calendar here:
-         *
-         * event.extendedProps.calendar
-         *
-         * Examples:
-         *   Academics
-         *   Research
-         *   Teaching
-         *   Travel
+         * Event title
          */
-        const props = event.extendedProps || {};
 
         modalTitle.textContent =
           event.title || "Untitled event";
 
+
+        /*
+         * Source calendar
+         *
+         * Supplied by update_calendar.py as:
+         *
+         * extendedProps.calendar
+         */
+
         const calendarName =
           props.calendar || "Calendar";
 
-        modalCalendar.textContent = calendarName;
+        modalCalendar.textContent =
+          calendarName;
+
 
         /*
-         * Use the colour generated by update_calendar.py.
-         * It is available both as extendedProps.color and
-         * event.backgroundColor.
+         * Use the source calendar's colour.
          */
+
         modalCalendar.style.backgroundColor =
           props.color ||
           event.backgroundColor ||
           "#666";
 
+
+        /*
+         * Remove any details from a previous event.
+         */
+
         modalDetails.innerHTML = "";
+
+
+        /*
+         * ONLY these two detail fields are shown.
+         *
+         * The calendar/source is displayed above
+         * as the coloured badge.
+         */
 
         addDetail(
           "When",
@@ -456,130 +520,58 @@
           props.location
         );
 
-        addDetail(
-          "Description",
-          props.description,
-          { description: true }
-        );
-
-        addDetail(
-          "URL",
-          props.url,
-          { link: true }
-        );
-
-        addDetail(
-          "Status",
-          props.status
-        );
-
-        addDetail(
-          "Transparency",
-          props.transp
-        );
-
-        addDetail(
-          "Categories",
-          props.categories
-        );
-
-        addDetail(
-          "Priority",
-          props.priority
-        );
-
-        addDetail(
-          "Organizer",
-          props.organizer
-        );
-
-        addDetail(
-          "Attendees",
-          props.attendees,
-          { description: true }
-        );
 
         /*
-         * The Python script stores any additional ICS properties
-         * under extendedProps.extra.
+         * Open the modal.
          */
-        if (
-          props.extra &&
-          typeof props.extra === "object"
-        ) {
-          Object.entries(props.extra).forEach(
-            ([key, value]) => {
-
-              if (
-                value === null ||
-                value === undefined ||
-                String(value).trim() === ""
-              ) {
-                return;
-              }
-
-              /*
-               * Avoid displaying properties that are already
-               * represented above.
-               */
-              const displayedKeys = [
-                "calendar",
-                "color",
-                "location",
-                "description",
-                "url",
-                "status",
-                "transp",
-                "categories",
-                "priority",
-                "organizer",
-                "attendees"
-              ];
-
-              if (displayedKeys.includes(
-                key.toLowerCase()
-              )) {
-                return;
-              }
-
-              addDetail(
-                key,
-                value
-              );
-            }
-          );
-        }
 
         modal.classList.add("visible");
       }
 
+
+      /* =======================================================
+         Close modal
+         ======================================================= */
+
       function closeEventDetails() {
+
         modal.classList.remove("visible");
       }
+
+
+      /*
+       * Close button
+       */
 
       modalClose.addEventListener(
         "click",
         closeEventDetails
       );
 
+
       /*
-       * Close when clicking outside the modal content.
+       * Close when clicking outside modal content
        */
+
       modal.addEventListener(
         "click",
         function (event) {
+
           if (event.target === modal) {
             closeEventDetails();
           }
         }
       );
 
+
       /*
-       * Close with Escape.
+       * Close with Escape
        */
+
       document.addEventListener(
         "keydown",
         function (event) {
+
           if (
             event.key === "Escape" &&
             modal.classList.contains("visible")
@@ -589,19 +581,27 @@
         }
       );
 
-      /*
-       * Load the JSON generated by:
-       *
-       * scripts/update_calendar.py
-       *
-       * Cache-busting is intentional because GitHub Pages may
-       * otherwise cache calendar.json after the GitHub Action
-       * has updated it.
-       */
-      fetch("calendar.json?v=" + Date.now())
+
+      /* =======================================================
+         Load calendar.json
+         
+         This file is generated by:
+         
+         scripts/update_calendar.py
+         
+         The cache-busting query parameter ensures that
+         GitHub Pages does not unnecessarily serve an old
+         copy of calendar.json.
+         ======================================================= */
+
+      fetch(
+        "calendar.json?v=" +
+        Date.now()
+      )
         .then(function (response) {
 
           if (!response.ok) {
+
             throw new Error(
               "Unable to load calendar.json: " +
               response.status
@@ -610,145 +610,241 @@
 
           return response.json();
         })
+
         .then(function (events) {
 
-          const calendar = new FullCalendar.Calendar(
-            calendarEl,
-            {
 
-              initialView: "timeGridWeek",
+          /* =================================================
+             Initialise FullCalendar
+             ================================================= */
 
-              firstDay: 1,
+          const calendar =
+            new FullCalendar.Calendar(
+              calendarEl,
+              {
 
-              timeZone: "Europe/London",
+                initialView:
+                  "timeGridWeek",
 
-              nowIndicator: true,
+                firstDay:
+                  1,
 
-              height: "100%",
+                timeZone:
+                  "Europe/London",
 
-              expandRows: true,
+                nowIndicator:
+                  true,
 
-              slotMinTime: "06:00:00",
+                height:
+                  "100%",
 
-              slotMaxTime: "23:00:00",
+                expandRows:
+                  true,
 
-              allDaySlot: true,
+                slotMinTime:
+                  "06:00:00",
 
-              weekends: true,
+                slotMaxTime:
+                  "23:00:00",
 
-              eventDisplay: "block",
+                allDaySlot:
+                  true,
 
-              eventTimeFormat: {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false
-              },
+                weekends:
+                  true,
 
-              headerToolbar: {
-                left: "prev,next today",
-                center: "title",
-                right: "timeGridWeek,dayGridMonth"
-              },
+                eventDisplay:
+                  "block",
 
-              buttonText: {
-                today: "Today",
-                week: "Week",
-                month: "Month"
-              },
 
-              events: events,
+                /*
+                 * Event time format
+                 */
 
-              /*
-               * Display the event title and location in the
-               * calendar itself.
-               */
-              eventContent: function (arg) {
+                eventTimeFormat: {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false
+                },
 
-                const wrapper =
-                  document.createElement("div");
 
-                const title =
-                  document.createElement("div");
+                /*
+                 * Toolbar
+                 */
 
-                title.className =
-                  "fc-event-title";
+                headerToolbar: {
+                  left:
+                    "prev,next today",
 
-                title.textContent =
-                  arg.event.title || "";
+                  center:
+                    "title",
 
-                wrapper.appendChild(title);
+                  right:
+                    "timeGridWeek,dayGridMonth"
+                },
 
-                const location =
-                  arg.event.extendedProps &&
-                  arg.event.extendedProps.location;
 
-                if (location) {
+                buttonText: {
+                  today:
+                    "Today",
 
-                  const locationEl =
-                    document.createElement("div");
+                  week:
+                    "Week",
 
-                  locationEl.className =
-                    "fc-event-location";
+                  month:
+                    "Month"
+                },
 
-                  locationEl.textContent =
-                    location;
 
-                  wrapper.appendChild(locationEl);
-                }
+                /*
+                 * Events generated by update_calendar.py
+                 */
 
-                return {
-                  domNodes: [wrapper]
-                };
-              },
+                events:
+                  events,
 
-              /*
-               * Clicking an event opens the details modal.
-               */
-              eventClick: function (info) {
 
-                info.jsEvent.preventDefault();
+                /* =============================================
+                   Event appearance
+                   ============================================= */
 
-                showEventDetails(info.event);
-              },
+                eventContent:
+                  function (arg) {
 
-              /*
-               * Browser tooltip for events.
-               */
-              eventDidMount: function (info) {
+                    const wrapper =
+                      document.createElement("div");
 
-                const props =
-                  info.event.extendedProps || {};
 
-                const parts = [];
+                    /*
+                     * Event title
+                     */
 
-                if (info.event.title) {
-                  parts.push(info.event.title);
-                }
+                    const title =
+                      document.createElement("div");
 
-                if (props.calendar) {
-                  parts.push(
-                    "Calendar: " +
-                    props.calendar
-                  );
-                }
+                    title.className =
+                      "fc-event-title";
 
-                if (props.location) {
-                  parts.push(
-                    "Location: " +
-                    props.location
-                  );
-                }
+                    title.textContent =
+                      arg.event.title || "";
 
-                if (parts.length) {
-                  info.el.title =
-                    parts.join("\n");
-                }
+                    wrapper.appendChild(title);
+
+
+                    /*
+                     * Location displayed inside
+                     * the calendar event itself.
+                     */
+
+                    const location =
+                      arg.event.extendedProps &&
+                      arg.event.extendedProps.location;
+
+                    if (location) {
+
+                      const locationEl =
+                        document.createElement("div");
+
+                      locationEl.className =
+                        "fc-event-location";
+
+                      locationEl.textContent =
+                        location;
+
+                      wrapper.appendChild(
+                        locationEl
+                      );
+                    }
+
+
+                    return {
+                      domNodes: [wrapper]
+                    };
+                  },
+
+
+                /* =============================================
+                   Event click
+                   ============================================= */
+
+                eventClick:
+                  function (info) {
+
+                    /*
+                     * Prevent the browser following
+                     * the event's URL.
+                     */
+
+                    info.jsEvent.preventDefault();
+
+                    showEventDetails(
+                      info.event
+                    );
+                  },
+
+
+                /* =============================================
+                   Event tooltip
+                   ============================================= */
+
+                eventDidMount:
+                  function (info) {
+
+                    const props =
+                      info.event.extendedProps ||
+                      {};
+
+                    const parts = [];
+
+
+                    if (info.event.title) {
+
+                      parts.push(
+                        info.event.title
+                      );
+                    }
+
+
+                    if (props.calendar) {
+
+                      parts.push(
+                        "Calendar: " +
+                        props.calendar
+                      );
+                    }
+
+
+                    if (props.location) {
+
+                      parts.push(
+                        "Location: " +
+                        props.location
+                      );
+                    }
+
+
+                    if (parts.length) {
+
+                      info.el.title =
+                        parts.join("\n");
+                    }
+                  }
               }
-            }
-          );
+            );
+
+
+          /*
+           * Render calendar
+           */
 
           calendar.render();
         })
+
+
+        /* =====================================================
+           Error handling
+           ===================================================== */
+
         .catch(function (error) {
 
           console.error(
@@ -757,15 +853,21 @@
           );
 
           calendarEl.innerHTML =
-            '<div style="' +
-            'padding:30px;' +
-            'font-family:sans-serif;' +
-            'color:#b00020;' +
-            '">' +
-            '<strong>Unable to load calendar.</strong>' +
-            '<br><br>' +
-            escapeHtml(error.message) +
-            '</div>';
+            "<div style=\"" +
+            "padding:30px;" +
+            "font-family:sans-serif;" +
+            "color:#b00020;" +
+            "\">" +
+
+            "<strong>" +
+            "Unable to load calendar." +
+            "</strong>" +
+
+            "<br><br>" +
+
+            error.message +
+
+            "</div>";
         });
 
     });
