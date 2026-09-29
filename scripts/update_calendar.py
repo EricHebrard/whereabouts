@@ -16,22 +16,22 @@ CALENDARS = [
     {
         "name": "Academics",
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/153c302eae1241669e5ac7cd0678fe7c5193535583262517238/calendar.ics",
-        "color": "#4285F4",
+        "color": "#FD8206",
     },
     {
         "name": "Research",
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/ae60a8e9f5e947eeafc1d5afed2647ab4825117944977208683/calendar.ics",
-        "color": "#34A853",
+        "color": "#BF56DA",
     },
     {
         "name": "Teaching",
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/9e1e7ceacdeb40a091a09257c68584ef9816993180113323493/calendar.ics",
-        "color": "#F29900",
+        "color": "#56D62B",
     },
     {
         "name": "Travel",
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/b2800759e43c4aae84d6f3c4cc34982d12859872542290148978/calendar.ics",
-        "color": "#8E44AD",
+        "color": "#90714C",
     },
 ]
 
