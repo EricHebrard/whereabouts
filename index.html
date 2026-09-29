@@ -726,10 +726,13 @@
                     weekday: "short"
                   });
 
-                  const day = date.getDate();
-                  const month = date.getMonth() + 1;
+                  // Week view: weekday + date
+                  if (arg.view.type === "timeGridWeek") {
+                    return `${weekday} ${date.getDate()}/${date.getMonth() + 1}`;
+                  }
 
-                  return `${weekday} ${day}/${month}`;
+                  // Month view: weekday only
+                  return weekday;
                 },
 
                 /*
