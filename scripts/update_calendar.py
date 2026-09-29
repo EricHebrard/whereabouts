@@ -1,3 +1,4 @@
+```python
 #!/usr/bin/env python3
 
 import json
@@ -114,17 +115,50 @@ def value_to_string(value):
 
             if isinstance(raw, bytes):
 
-                return raw.decode(
+                text = raw.decode(
                     "utf-8",
                     errors="replace"
                 )
 
-            return str(raw)
+            else:
+
+                text = str(raw)
+
+            # Decode iCalendar escaped characters.
+            #
+            # \\n  -> newline
+            # \\N  -> newline
+            # \\,  -> comma
+            # \\;  -> semicolon
+            # \\\\  -> backslash
+            #
+            # The order is important: escaped backslashes
+            # are decoded last.
+
+            text = (
+                text
+                .replace("\\n", "\n")
+                .replace("\\N", "\n")
+                .replace("\\,", ",")
+                .replace("\\;", ";")
+                .replace("\\\\", "\\")
+            )
+
+            return text
 
         except Exception:
             pass
 
-    return str(value)
+    text = str(value)
+
+    return (
+        text
+        .replace("\\n", "\n")
+        .replace("\\N", "\n")
+        .replace("\\,", ",")
+        .replace("\\;", ";")
+        .replace("\\\\", "\\")
+    )
 
 
 # ============================================================
@@ -414,6 +448,7 @@ def component_to_event(
 
     # A date rather than datetime means
     # this is an all-day event.
+
     all_day = not isinstance(
         start,
         datetime
@@ -609,129 +644,4 @@ def expand_events(
 
         event = component_to_event(
             component,
-            calendar_name,
-            calendar_color
-        )
-
-        if event is not None:
-
-            events.append(event)
-
-    return events
-
-
-# ============================================================
-# PROCESS ALL FOUR CALENDARS
-# ============================================================
-
-all_events = []
-
-
-for calendar_config in CALENDARS:
-
-    calendar_name = (
-        calendar_config["name"]
-    )
-
-    ics_url = (
-        calendar_config["url"]
-    )
-
-    calendar_color = (
-        calendar_config["color"]
-    )
-
-    print(
-        f"Downloading "
-        f"{calendar_name} calendar..."
-    )
-
-    if (
-        not ics_url
-        or "PASTE_" in ics_url
-    ):
-
-        raise RuntimeError(
-            f"The ICS URL for "
-            f"{calendar_name} has not "
-            f"been configured."
-        )
-
-    data = download_calendar(
-        ics_url
-    )
-
-    calendar = (
-        icalendar.Calendar.from_ical(
-            data
-        )
-    )
-
-    events = expand_events(
-        calendar,
-        calendar_name,
-        calendar_color
-    )
-
-    print(
-        f"  Found {len(events)} "
-        f"event occurrences."
-    )
-
-    all_events.extend(events)
-
-
-# ============================================================
-# STABLE SORTING
-# ============================================================
-
-all_events.sort(
-    key=lambda event: (
-        event.get(
-            "start",
-            ""
-        ),
-
-        event.get(
-            "end",
-            ""
-        ),
-
-        event.get(
-            "title",
-            ""
-        ),
-
-        event.get(
-            "id",
-            ""
-        ),
-    )
-)
-
-
-# ============================================================
-# WRITE JSON
-# ============================================================
-
-with open(
-    OUTPUT_FILE,
-    "w",
-    encoding="utf-8"
-) as output:
-
-    json.dump(
-        all_events,
-        output,
-        ensure_ascii=False,
-        indent=2
-    )
-
-
-print(
-    f"Wrote "
-    f"{len(all_events)} event occurrences "
-    f"to {OUTPUT_FILE} "
-    f"for {EXPANSION_START} "
-    f"through {EXPANSION_END}."
-)
+```
