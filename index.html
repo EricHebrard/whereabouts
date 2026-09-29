@@ -64,29 +64,32 @@
       background-color: #007D69 !important;
       border-color: #007D69 !important;
       color: #fff !important;
+      opacity: 1 !important;
     }
 
     .fc-button:hover {
       background-color: #003C3C !important;
       border-color: #003C3C !important;
+      opacity: 1 !important;
     }
 
     .fc-button:focus {
       box-shadow: none !important;
     }
 
-    .fc-button.fc-button-active {
-      background-color: #003C3C !important;
-      border-color: #003C3C !important;
-      color: #fff !important;
-      opacity: 0.55;
-    }
-
-    .fc-button:disabled {
+    .fc-button.fc-button-active,
+.fc-button:disabled {
       background-color: #007D69 !important;
       border-color: #007D69 !important;
       color: #fff !important;
-      opacity: 0.55;
+      opacity: 0.55; !important;
+    }
+
+    .fc-button:disabled:hover {
+      background-color: #007D69 !important;
+      border-color: #007D69 !important;
+      color: #fff !important;
+      opacity: 0.55; !important;
     }
 
     .fc-event {
