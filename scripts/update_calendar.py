@@ -33,6 +33,11 @@ CALENDARS = [
         "url": "https://outlook.office365.com/owa/calendar/17fdb5c3ca62463ca30184560b629747@exeter.ac.uk/b2800759e43c4aae84d6f3c4cc34982d12859872542290148978/calendar.ics",
         "color": "#90714C",
     },
+    {
+        "name": "Perso",
+        "url": "https://calendar.google.com/calendar/ical/exeter.ac.uk_fi3fmgtf9f3u87u9jkph938t44%40group.calendar.google.com/public/basic.ics",
+        "color": "#007DFF",
+    },    
 ]
 
 
